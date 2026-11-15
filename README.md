@@ -33,6 +33,10 @@ Never represent a demonstration receipt as evidence of receipt by the United Sta
 See [agency policy and configuration](docs/AGENCY_POLICY.md) for trusted pin/revision settings, primary sources, exact-host matching, expiry and startup behavior. The optional reviewed sample lists only `www.justice.gov` from its USAGov entry; it is not a complete Federal directory or an authorized intake route.
 
 
+## Secure Intake integration contract (UFR-004)
+
+`config/engine.lock.json` pins Secure Intake `1.0.0-rc.9` (tag and source commit) as a development target only; the validator refuses to mark a prerelease or digest-less pin production eligible. `src/engine/` validates the engine's liveness/readiness, error and signed-webhook contracts and provides a bounded probe client. `npm run validate:engine` checks the lock; `npm run validate:engine -- --base-url https://...` probes a running engine. Portal readiness is unchanged and no engine is configured. See [docs/ENGINE_CONTRACT.md](docs/ENGINE_CONTRACT.md).
+
 ## Public website shell
 
 Open `http://127.0.0.1:3000/` after `npm start`. The overview, `/agencies`, `/help`, `/privacy` and `/about` pages are server-rendered HTML with a local stylesheet. They work without JavaScript or an account. The directory uses only a configured current registry and otherwise displays a truthful unavailable state. There is no filing form, upload, tracking lookup or government receipt.
