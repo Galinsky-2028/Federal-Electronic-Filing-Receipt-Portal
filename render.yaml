@@ -1,0 +1,23 @@
+# Non-authorizing public prototype shell (Render free plan).
+# This deployment accepts NO filings and issues NO receipts. It is not an
+# official U.S. Government service. /api/ready intentionally returns 503
+# (upstream_unconfigured), so liveness (/api/health) is the health check.
+# The reviewed agency-registry sample is deliberately NOT configured; the
+# directory page shows its truthful unavailable state.
+services:
+  - type: web
+    name: federal-filing-receipt-portal-prototype
+    runtime: node
+    repo: https://github.com/Galinsky-2028/Federal-Electronic-Filing-Receipt-Portal
+    branch: main
+    region: virginia
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    autoDeployTrigger: checksPass
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: PORTAL_BIND_HOST
+        value: 0.0.0.0

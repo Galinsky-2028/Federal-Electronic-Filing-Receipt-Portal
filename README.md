@@ -22,6 +22,10 @@ accept filings. `GET /api/ready` returns HTTP 503 with `upstream_unconfigured` b
 
 Never represent a demonstration receipt as evidence of receipt by the United States Government.
 
+## Public prototype deployment
+
+`render.yaml` describes a Render free-plan web service for the non-authorizing public shell only: `npm run build`, `npm start`, `PORTAL_BIND_HOST=0.0.0.0` and health check `GET /api/health`. `GET /api/ready` keeps returning 503 `upstream_unconfigured` by design and must not be used as the health check or "fixed" to report ready. The agency registry is not configured there, so the directory shows its unavailable state. The deployment accepts no filings, stores no claimant data and issues no receipts; it is a development prototype, not an official U.S. Government filing service.
+
 ## Federal policy and agency-domain registry
 
 `GET /api/policy` exposes the versioned prototype-only policy. `GET /api/agencies` is a read-only endpoint backed by an explicitly configured SHA-256-pinned registry; it returns 503 without current configuration. Domain matches never grant filing authority, and readiness continues to report the missing upstream intake contract.
