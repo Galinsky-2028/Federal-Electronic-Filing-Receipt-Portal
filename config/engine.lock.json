@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "contract": "ufr-engine-contract-v1",
+  "engine": {
+    "repository": "Justice-For-All-Movement/Secure-Intake-Case-Workflow-Engine",
+    "service": "secure-intake-case-workflow-engine",
+    "version": "1.0.0-rc.9",
+    "tag": "v1.0.0-rc.9",
+    "sourceCommit": "2fb452f23e5e5464db03a3ec95d36c4bc2db4fa4",
+    "manifestSchemaVersion": 1,
+    "image": "ghcr.io/neophilism/secure-intake-case-workflow-engine:1.0.0-rc.9",
+    "imageDigest": null
+  },
+  "production": {
+    "eligible": false,
+    "requires": [
+      "Secure Intake SI-42 stable generic 1.0 release pinned by tag, source commit and immutable image digest",
+      "Upstream receipt, signing, time, idempotency and ledger capabilities (UFR-006 to UFR-014) released upstream or proven portal-only",
+      "Enacted or otherwise valid filing authority and a designated receiving institution (UFR-060)"
+    ]
+  }
+}
