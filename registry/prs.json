@@ -4,7 +4,7 @@
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 60,
-  "observedAt": "2026-11-15T18:31:47Z",
+  "observedAt": "2026-11-15T18:39:53Z",
   "sourceFiles": [
     "docs/DEVELOPMENT_PLAN.md",
     "docs/ARCHITECTURE.md",
@@ -88,7 +88,9 @@
       "id": "UFR-004",
       "title": "Reusable engine integration contracts",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        10
+      ],
       "priority": "P0",
       "phase": "F1",
       "dependsOn": [
@@ -1523,6 +1525,51 @@
       "headSha": "53dcbcd94f6960057946de1d1726b10161578ece",
       "baseRef": "main",
       "mergeCommitSha": "90d76b06bff291a068d2a64d5b58c31fc70fb00e"
+    },
+    {
+      "id": 5325817434,
+      "number": 8,
+      "title": "Registry: record merged UFR-003, UFR-005 and UFR-015 PRs",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/8",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-11-15T18:32:08Z",
+      "updatedAt": "2026-11-15T18:33:22Z",
+      "closedAt": "2026-11-15T18:33:22Z",
+      "mergedAt": "2026-11-15T18:33:22Z",
+      "headSha": "9840b2ea372114b6a2aa611ba4bb773c23e3ed96",
+      "baseRef": "main",
+      "mergeCommitSha": "5aa8bede03a2f7df9814af2a21ed29abf87f3d50"
+    },
+    {
+      "id": 5325826634,
+      "number": 9,
+      "title": "Add Render free-plan blueprint for the non-authorizing public shell",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/9",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-11-15T18:33:12Z",
+      "updatedAt": "2026-11-15T18:33:41Z",
+      "closedAt": "2026-11-15T18:33:41Z",
+      "mergedAt": "2026-11-15T18:33:41Z",
+      "headSha": "ef72658b70ba3492573fed4761aa58e67e6bc2d9",
+      "baseRef": "main",
+      "mergeCommitSha": "5a01c01feac1f6aa0c916394ad472f4963ca6059"
+    },
+    {
+      "id": 5325883090,
+      "number": 10,
+      "title": "UFR-004: Secure Intake engine integration contract",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/10",
+      "state": "open",
+      "draft": false,
+      "createdAt": "2026-11-15T18:39:42Z",
+      "updatedAt": "2026-11-15T18:39:42Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "bd55c4b007384dc5ded430742466c1c05a0b7edc",
+      "baseRef": "main",
+      "mergeCommitSha": null
     }
   ]
 }
