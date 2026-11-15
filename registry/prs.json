@@ -4,7 +4,7 @@
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 60,
-  "observedAt": "2026-10-15T06:30:22Z",
+  "observedAt": "2026-11-15T18:31:47Z",
   "sourceFiles": [
     "docs/DEVELOPMENT_PLAN.md",
     "docs/ARCHITECTURE.md",
@@ -63,7 +63,9 @@
       "id": "UFR-003",
       "title": "Application skeleton and CI",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        4
+      ],
       "priority": "P0",
       "phase": "F1",
       "dependsOn": [
@@ -108,7 +110,9 @@
       "id": "UFR-005",
       "title": "Federal legal policy and agency-domain registry",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        6
+      ],
       "priority": "P0",
       "phase": "F1",
       "dependsOn": [
@@ -332,7 +336,9 @@
       "id": "UFR-015",
       "title": "Unified public website shell",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        7
+      ],
       "priority": "P0",
       "phase": "F3",
       "dependsOn": [
@@ -1433,13 +1439,90 @@
       "number": 2,
       "title": "UFR-002: define authority boundaries and threat model",
       "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/2",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-15T06:30:22Z",
-      "updatedAt": "2026-10-15T06:30:22Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "baseRef": "main"
+      "updatedAt": "2026-10-15T06:32:00Z",
+      "closedAt": "2026-10-15T06:32:00Z",
+      "mergedAt": "2026-10-15T06:32:00Z",
+      "headSha": "223e20021af89abe8be8862cbe9508111c5b2757",
+      "baseRef": "main",
+      "mergeCommitSha": "19c21ae9d27e26f571d981a9b55986cb6feb0299"
+    },
+    {
+      "id": 4890352734,
+      "number": 3,
+      "title": "Apply owner AI security-review policy without external-auditor prerequisite",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/3",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-16T15:11:39Z",
+      "updatedAt": "2026-10-16T15:13:29Z",
+      "closedAt": "2026-10-16T15:13:29Z",
+      "mergedAt": "2026-10-16T15:13:29Z",
+      "headSha": "0cacb5f19d5d0c072fa7d48c4cf0058853b583af",
+      "baseRef": "main",
+      "mergeCommitSha": "8c8ade1998b465dd610c0f236a55621aa9bfaa72"
+    },
+    {
+      "id": 4913178661,
+      "number": 4,
+      "title": "UFR-003: Application skeleton and CI",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/4",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T21:58:21Z",
+      "updatedAt": "2026-11-02T00:19:01Z",
+      "closedAt": "2026-11-02T00:19:01Z",
+      "mergedAt": "2026-11-02T00:19:01Z",
+      "headSha": "741be334653d8a4d42657834fc394582e2a0afa6",
+      "baseRef": "main",
+      "mergeCommitSha": "899fc92431f592f06063e945e2c231cee95e9e91"
+    },
+    {
+      "id": 4941671259,
+      "number": 5,
+      "title": "Integrate Development Deployment Monitor (inventory-only)",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/5",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-20T19:59:25Z",
+      "updatedAt": "2026-10-20T23:03:01Z",
+      "closedAt": "2026-10-20T23:03:01Z",
+      "mergedAt": "2026-10-20T23:03:01Z",
+      "headSha": "efa3b88a65169890ac1c2f34c0d02b615079a02e",
+      "baseRef": "main",
+      "mergeCommitSha": "95bd720efca06ce94f8fbea4c01cf3d38c3b0437"
+    },
+    {
+      "id": 5113116480,
+      "number": 6,
+      "title": "UFR-005: Federal legal policy and agency-domain registry",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/6",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-11-02T00:31:05Z",
+      "updatedAt": "2026-11-02T00:32:15Z",
+      "closedAt": "2026-11-02T00:32:15Z",
+      "mergedAt": "2026-11-02T00:32:15Z",
+      "headSha": "1efb486646038f5aaf9f6f4af65cccbb525f1b28",
+      "baseRef": "main",
+      "mergeCommitSha": "5e51b60cd52388d1fda5ad2162efb2cd128d6c5d"
+    },
+    {
+      "id": 5113168604,
+      "number": 7,
+      "title": "UFR-015: Unified public website shell",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/7",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-11-02T00:37:47Z",
+      "updatedAt": "2026-11-02T00:38:46Z",
+      "closedAt": "2026-11-02T00:38:46Z",
+      "mergedAt": "2026-11-02T00:38:46Z",
+      "headSha": "53dcbcd94f6960057946de1d1726b10161578ece",
+      "baseRef": "main",
+      "mergeCommitSha": "90d76b06bff291a068d2a64d5b58c31fc70fb00e"
     }
   ]
 }
