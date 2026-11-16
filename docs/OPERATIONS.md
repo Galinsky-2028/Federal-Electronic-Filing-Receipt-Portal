@@ -18,6 +18,9 @@ Required together: `DATABASE_URL` (Neon, `sslmode=verify-full`), `RECEIPT_SIGNIN
 
 Crypto-shred caveat: backups made before a disposition still contain wrapped data keys. Disposition is final only after those backups expire.
 
+## Compliance Engine (CAIAE) event delivery
+`CAIAE_API_BASE_URL`, `CAIAE_ORGANIZATION_ID` and `CAIAE_OPERATOR_TOKEN` come from the Render env group `caiae-client-federal-filing-portal-demo`, linked to the portal. The tenant was provisioned by digest through `CAIAE_DEMO_TENANTS` on `caiae-api`, so the API never holds the token. The worker forwards ledger entries in order (`caiae.events_delivered` logs). If an outcome is unknown, it reconciles by `ledgerSeq` before resending (`caiae.reconciled`). While CAIAE sleeps it backs off up to 10 minutes (`caiae.delivery_retry`). Check lag on `/staff/oversight` or in `ufr_caiae_event_lag`. To rotate the token, follow CAIAE's demo-tenant rotation steps and update the env group.
+
 ## Independent witnessing
 Third parties run `node scripts/witness-checkpoints.mjs <origin> state.json` on a schedule. Any changed checkpoint, key or backwards head fails the run.
 

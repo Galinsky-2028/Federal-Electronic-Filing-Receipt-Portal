@@ -12,6 +12,7 @@ import {
 } from "./views2.mjs";
 import { agencyScopes, hasRole } from "../platform/services.mjs";
 import { otpauthUri } from "../platform/safety.mjs";
+import { requestLanguage, translateHtml } from "../platform/i18n.mjs";
 
 export const DEMO_CSP = "default-src 'none'; style-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'";
 const MAX_FORM_BYTES = 64 * 1024;
@@ -19,7 +20,7 @@ const MAX_MULTIPART_BYTES = LIMITS.totalBytes + 512 * 1024;
 const newKey = () => randomBytes(18).toString("base64url");
 const UUID = "[0-9a-f-]{36}";
 
-const PUBLIC_EXACT = ["/file", "/file/resume", "/file/guide", "/track", "/track/case", "/track/amend", "/track/logout", "/track/corrections",
+const PUBLIC_EXACT = ["/idioma/es", "/language/en", "/file", "/file/resume", "/file/guide", "/track", "/track/case", "/track/amend", "/track/logout", "/track/corrections",
   "/track/delegations", "/verify", "/api/verify", "/api/receipts/keys", "/api/demo/agencies", "/assets/demo.v1.css"];
 const DEMO_PATTERNS = [
   /^\/track\/receipts\/RCPT-DEMO-[0-9A-Z]{20}\.(json|txt)$/, new RegExp(`^/track/(corrections/${UUID}\\.json|delegations/${UUID}/revoke)$`),
@@ -396,8 +397,22 @@ export function createDemoHandler({ backend, auth, platform = null, publicOrigin
 
   const storageDown = (e) => ["ECONNREFUSED", "ENOTFOUND", "ETIMEDOUT", "ECONNRESET", "57P01", "57P03", "53300"].includes(e?.code) ||
     /timeout exceeded when trying to connect|Connection terminated/i.test(String(e?.message ?? ""));
+  async function localized(req, path, method) {
+    const cookies = auth?.parseCookies?.(req.headers.cookie) ?? {};
+    if ((path === "/idioma/es" || path === "/language/en") && (method === "GET" || method === "HEAD")) {
+      const lang = path === "/idioma/es" ? "es" : "en";
+      return { status: 303, rawBody: "", contentType: "text/plain; charset=utf-8", headers: { location: "/file/guide",
+        "set-cookie": `ufr_lang=${lang}; Path=/; SameSite=Lax; Max-Age=31536000${publicOrigin?.startsWith("https:") ? "; Secure" : ""}` } };
+    }
+    const response = await handle(req, path, method);
+    if (path.startsWith("/staff") || !/^text\/html/.test(response?.contentType ?? "")) return response;
+    const lang = requestLanguage(req, cookies);
+    return { ...response, rawBody: typeof response.rawBody === "string" ? translateHtml(response.rawBody, lang) : response.rawBody,
+      headers: { ...(response.headers ?? {}), "content-language": lang, vary: "Accept-Language, Cookie" } };
+  }
+
   return async function demoHandler(req, path, method) {
-    try { return await handle(req, path, method); }
+    try { return await localized(req, path, method); }
     catch (error) {
       if (error instanceof HttpError || error instanceof IntakeError) return { status: error.status ?? 400, body: { error: error.code } };
       if (storageDown(error)) {

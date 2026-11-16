@@ -6,7 +6,7 @@ export const DEMO_BANNER = "Not an official U.S. Government filing service. Demo
 
 export const demoNavigation = Object.freeze([
   ["/", "Overview"], ["/file", "File (demo)"], ["/track", "Track"], ["/verify", "Verify a receipt"],
-  ["/agencies", "Agency directory"], ["/transparency", "Transparency"], ["/help/assistance", "Assistance"], ["/es", "Español"],
+  ["/agencies", "Agency directory"], ["/transparency", "Transparency"], ["/help/assistance", "Assistance"], ["/idioma/es", "Español"],
 ]);
 
 export function staffNavigation(user) {

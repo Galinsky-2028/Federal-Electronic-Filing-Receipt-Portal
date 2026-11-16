@@ -20,7 +20,7 @@ Presentation (`src/demo/routes.mjs`, `views*.mjs`) calls the `LocalIntakeBackend
 | 027 | partial | Heuristic scanner (EICAR, active PDF content, image polyglots, script markers) and quarantine (423 on download). No commercial AV engine. |
 | 028 | done (API) | Token-bound resumable chunk upload API (`/api/uploads`), attachable once to a filing |
 | 029 | partial | Automated checks on every page (labels, one h1, skip link, no scripts, size under 60 KB); print styles; text receipts. Manual assistive-technology audit pending. |
-| 030 | partial | Spanish overview and safety page (`/es`) and an assistance page; full UI translation pending |
+| 030 | done | Spanish for every form and claimant flow (filing, guided forms, drafts, receipts, tracking, delegation, corrections, notices, deadlines, verification, errors). Selected by `/idioma/es` cookie or `Accept-Language`. A coverage test fails on any untranslated English UI text. Signed receipt JSON stays canonical English; staff pages stay English. |
 | 031 | partial | Clearly fictional demo directory; the real Federal directory needs primary sources unreachable here |
 | 032, 033 | done | Routing without intake veto; delivery worker with backoff and dead-letter |
 | 037 | done | Agency-scoped staff acknowledge, send notices and receive claimant replies |
@@ -31,7 +31,7 @@ Presentation (`src/demo/routes.mjs`, `views*.mjs`) calls the `LocalIntakeBackend
 | 044 | done | Emergency flag: 4-hour routing SLA, queue priority, staff notification |
 | 045 | done | Notices delivered to the portal inbox with ledgered read receipts; email is simulated (provider-free outbox) |
 | 047 | done | Classification-marking detection stops collection and stores only a content-free audit event. It cannot detect unmarked classified content. |
-| 048 | partial | Token-protected, content-free event feed (`/api/events/after/<seq>`); no Compliance Engine ingestion yet |
+| 048 | done (demo tenant) | Every ledger entry is delivered in order to the deployed CAIAE engine as content-free evidence on one portal resource, through a dedicated fictional demo tenant (`federal-filing-portal-demo`). Delivery uses a durable cursor, an in-flight marker reconciled before any resend, and capped backoff. Lag and errors appear on the oversight dashboard and in metrics. The token-protected pull feed remains available. |
 | 049 | partial | Signed ledger checkpoints (`/api/ledger/checkpoints`) and `scripts/witness-checkpoints.mjs`; no independent witness operator yet |
 | 050, 051 | done | Oversight dashboard (ledger validity, reveals, holds, MFA gaps, refusals, quarantine, SLAs); public transparency statistics with suppression of counts from 1 to 4 |
 | 052 | done | Receipt corrections (separately signed correction notice, never replacing the receipt), processing complaints, withdrawal |

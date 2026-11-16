@@ -4,7 +4,7 @@
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 60,
-  "observedAt": "2026-11-16T20:27:00Z",
+  "observedAt": "2026-11-16T20:39:24Z",
   "sourceFiles": [
     "docs/DEVELOPMENT_PLAN.md",
     "docs/ARCHITECTURE.md",
@@ -757,7 +757,9 @@
       "id": "UFR-030",
       "title": "Language support and public assistance",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        14
+      ],
       "priority": "P1",
       "phase": "F4",
       "dependsOn": [
@@ -778,7 +780,7 @@
       "contributingPrs": [
         13
       ],
-      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
+      "deliveryNote": "Implemented portal-locally (Spanish for all forms and claimant flows; staff UI English) under owner directives; not production or government-authorized."
     },
     {
       "id": "UFR-031",
@@ -1226,7 +1228,9 @@
       "id": "UFR-048",
       "title": "Compliance Engine event integration",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        14
+      ],
       "priority": "P2",
       "phase": "F7",
       "dependsOn": [
@@ -1249,7 +1253,7 @@
       "contributingPrs": [
         13
       ],
-      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
+      "deliveryNote": "Implemented against the deployed CAIAE demonstration engine via a fictional demo tenant (ledger events as content-free evidence, idempotent delivery); demonstration only, not production."
     },
     {
       "id": "UFR-049",
@@ -1771,13 +1775,28 @@
       "number": 13,
       "title": "Portal-local platform: security, records, workflows, oversight, operations",
       "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/13",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-16T20:26:40Z",
-      "updatedAt": "2026-11-16T20:26:41Z",
+      "updatedAt": "2026-11-16T20:27:44Z",
+      "closedAt": "2026-11-16T20:27:44Z",
+      "mergedAt": "2026-11-16T20:27:44Z",
+      "headSha": "cfec56ad84fc8e45a0e4907249a3b76e19d60700",
+      "baseRef": "main",
+      "mergeCommitSha": "e93cb215e45a0ae93b717ca1d1fab31b3621c507"
+    },
+    {
+      "id": 5344704476,
+      "number": 14,
+      "title": "UFR-048 CAIAE event delivery and UFR-030 Spanish claimant flows",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/14",
+      "state": "open",
+      "draft": false,
+      "createdAt": "2026-11-16T20:39:11Z",
+      "updatedAt": "2026-11-16T20:39:11Z",
       "closedAt": null,
       "mergedAt": null,
-      "headSha": "8b48d847a26632f18a3c52db896e78d6ecc27547",
+      "headSha": "50547927c07da8294d2dd4f85d7173d4e39c5eea",
       "baseRef": "main",
       "mergeCommitSha": null
     }
