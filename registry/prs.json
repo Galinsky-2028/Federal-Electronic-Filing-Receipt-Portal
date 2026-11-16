@@ -4,7 +4,7 @@
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 60,
-  "observedAt": "2026-11-15T18:39:53Z",
+  "observedAt": "2026-11-16T19:44:09Z",
   "sourceFiles": [
     "docs/DEVELOPMENT_PLAN.md",
     "docs/ARCHITECTURE.md",
@@ -137,7 +137,9 @@
       "id": "UFR-006",
       "title": "Canonical receipt schema",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F2",
       "dependsOn": [
@@ -153,13 +155,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-007",
       "title": "Authoritative time service",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F2",
       "dependsOn": [
@@ -175,13 +180,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-008",
       "title": "Immutable original-submission manifest",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F2",
       "dependsOn": [
@@ -197,13 +205,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-009",
       "title": "Atomic durable receipt transaction",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F2",
       "dependsOn": [
@@ -220,13 +231,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-010",
       "title": "Protected digital receipt signing",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F2",
       "dependsOn": [
@@ -242,13 +256,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-011",
       "title": "Public independent receipt verifier",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F2",
       "dependsOn": [
@@ -264,13 +281,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-012",
       "title": "Idempotent filing and retry protection",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F2",
       "dependsOn": [
@@ -286,13 +306,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-013",
       "title": "Durable receipt-event outbox",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F2",
       "dependsOn": [
@@ -309,13 +332,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-014",
       "title": "Append-only cryptographic receipt ledger",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F2",
       "dependsOn": [
@@ -332,7 +358,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-015",
@@ -362,7 +389,9 @@
       "id": "UFR-016",
       "title": "Universal text-only filing",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P0",
       "phase": "F3",
       "dependsOn": [
@@ -380,7 +409,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-017",
@@ -454,7 +484,9 @@
       "id": "UFR-020",
       "title": "Receipt presentation and export",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P1",
       "phase": "F3",
       "dependsOn": [
@@ -472,13 +504,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-021",
       "title": "Secure claimant status tracking",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P1",
       "phase": "F3",
       "dependsOn": [
@@ -495,13 +530,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-022",
       "title": "Amendments and supplementary filings",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P1",
       "phase": "F3",
       "dependsOn": [
@@ -519,7 +557,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-023",
@@ -565,7 +604,11 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        11
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-025",
@@ -726,13 +769,19 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        11
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-032",
       "title": "Automatic routing without intake veto",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P1",
       "phase": "F5",
       "dependsOn": [
@@ -749,13 +798,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-033",
       "title": "Reliable interagency delivery worker",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        11
+      ],
       "priority": "P1",
       "phase": "F5",
       "dependsOn": [
@@ -771,7 +823,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-034",
@@ -863,7 +916,11 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        11
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-038",
@@ -887,7 +944,11 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        11
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-039",
@@ -1312,7 +1373,11 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        11
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-057",
@@ -1561,13 +1626,28 @@
       "number": 10,
       "title": "UFR-004: Secure Intake engine integration contract",
       "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/10",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-15T18:39:42Z",
-      "updatedAt": "2026-11-15T18:39:42Z",
+      "updatedAt": "2026-11-15T18:40:27Z",
+      "closedAt": "2026-11-15T18:40:27Z",
+      "mergedAt": "2026-11-15T18:40:27Z",
+      "headSha": "603249b34f0ccc0f7126df3355a52900112e1bcd",
+      "baseRef": "main",
+      "mergeCommitSha": "bbecf3d918ca849d812e63adea465c9ac703660a"
+    },
+    {
+      "id": 5343837398,
+      "number": 11,
+      "title": "Portal-local demonstration filing and receipt system",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/11",
+      "state": "open",
+      "draft": false,
+      "createdAt": "2026-11-16T19:43:25Z",
+      "updatedAt": "2026-11-16T19:43:25Z",
       "closedAt": null,
       "mergedAt": null,
-      "headSha": "bd55c4b007384dc5ded430742466c1c05a0b7edc",
+      "headSha": "29f288d509392e635d451aee235c88708ef55b4b",
       "baseRef": "main",
       "mergeCommitSha": null
     }

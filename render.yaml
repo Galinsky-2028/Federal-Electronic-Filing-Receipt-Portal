@@ -1,9 +1,14 @@
-# Non-authorizing public prototype shell (Render free plan).
-# This deployment accepts NO filings and issues NO receipts. It is not an
-# official U.S. Government service. /api/ready intentionally returns 503
-# (upstream_unconfigured), so liveness (/api/health) is the health check.
-# The reviewed agency-registry sample is deliberately NOT configured; the
-# directory page shows its truthful unavailable state.
+# Federal Electronic Filing & Receipt Portal: DEMONSTRATION deployment
+# (Render free plan). It is not an official U.S. Government service. Demo
+# filings use fictional agencies and synthetic data; receipts are signed by a
+# prototype key and are never government receipts.
+# Secrets are entered in Render only (sync: false) and never committed:
+#   DATABASE_URL         Neon Postgres connection string (sslmode=require)
+#   RECEIPT_SIGNING_KEY  base64 PKCS#8 DER Ed25519 private key
+#   SESSION_SECRET       >= 32 random characters
+#   STAFF_USERNAME / STAFF_PASSWORD (>= 16 chars) for the demo staff console
+# With none of the first three set, demo filing is disabled; with only some
+# set, startup aborts. Migrations run on startup under an advisory lock.
 services:
   - type: web
     name: federal-filing-receipt-portal-prototype
@@ -12,7 +17,7 @@ services:
     branch: main
     region: virginia
     plan: free
-    buildCommand: npm run build
+    buildCommand: npm ci && npm run build
     startCommand: npm start
     autoDeployTrigger: checksPass
     healthCheckPath: /api/health
@@ -21,3 +26,17 @@ services:
         value: "22"
       - key: PORTAL_BIND_HOST
         value: 0.0.0.0
+      - key: TRUST_PROXY
+        value: "true"
+      - key: PUBLIC_ORIGIN
+        value: https://federal-filing-receipt-portal-prototype.onrender.com
+      - key: DATABASE_URL
+        sync: false
+      - key: RECEIPT_SIGNING_KEY
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: STAFF_USERNAME
+        sync: false
+      - key: STAFF_PASSWORD
+        sync: false

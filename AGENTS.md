@@ -16,3 +16,8 @@ Use `registry/prs.json` as the sole canonical PR plan and `docs/DEVELOPMENT_PLAN
 **Upstream-first rule:** For a capability useful both here and National Secure Ideas, first verify Secure Intake implementation. Improve Secure Intake generically if needed, test both downstream consumers and pin a released upstream revision. Do not fork/copy its case processing, evidence, receipt, workflow or deadline logic. Federal legal rules and presentation stay here.
 
 Every PR: typecheck/build/test, negative-path security checks, versioned contracts, secret-free docs and tracked evidence. AI-assisted review permitted; unresolved vulnerabilities and failed required tests block merging. Draft legislation does not grant Federal filing authority; display demo-only statements until real authorization is proven. After software completion reconcile the legislative text with executable specification and tests.
+
+
+## Owner directive: portal-local build, 16 November 2026
+
+The owner directed that the remaining portal features be built now, portal-locally, rather than waiting on Secure Intake. Keep the demo-only boundary: fictional agencies, synthetic data, non-government receipt language and banners. Keep presentation behind the `LocalIntakeBackend` seam so a Secure Intake adapter can replace it, and do not copy Secure Intake code. Record units as implemented portal-locally with upstream integration pending. The engine lock still blocks production eligibility.
