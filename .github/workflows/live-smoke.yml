@@ -1,0 +1,30 @@
+name: Live demo smoke
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Foundation checks"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-demo-smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    # Files one synthetic filing per run, so it runs only after successful CI on main or on demand (no schedule).
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+      - name: End-to-end demo smoke (synthetic filing)
+        env:
+          PORTAL_BASE_URL: https://federal-filing-receipt-portal-prototype.onrender.com
+        run: node scripts/live-smoke.mjs
