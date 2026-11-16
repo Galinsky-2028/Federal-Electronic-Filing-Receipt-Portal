@@ -1,0 +1,35 @@
+{
+  "schema": "ufr-demo-agencies-v1",
+  "fictional": true,
+  "notice": "FICTIONAL demonstration agencies for routing tests. None of these is a real U.S. Government agency, office or filing address.",
+  "agencies": [
+    {
+      "id": "demo-benefits-claims-office",
+      "name": "Demonstration Benefits Claims Office (fictional)",
+      "description": "Fictional recipient for administrative benefit claims and appeals in this prototype.",
+      "filingTypes": ["administrative-claim", "administrative-appeal", "general-correspondence"],
+      "routingSlaHours": 24
+    },
+    {
+      "id": "demo-records-access-unit",
+      "name": "Demonstration Records Access Unit (fictional)",
+      "description": "Fictional recipient for records-access (FOIA-style) requests and appeals in this prototype.",
+      "filingTypes": ["records-request", "records-appeal", "general-correspondence"],
+      "routingSlaHours": 24
+    },
+    {
+      "id": "demo-tort-claims-desk",
+      "name": "Demonstration Tort Claims Desk (fictional)",
+      "description": "Fictional recipient for property-damage and injury claim notices in this prototype.",
+      "filingTypes": ["tort-claim-notice", "general-correspondence"],
+      "routingSlaHours": 48
+    },
+    {
+      "id": "demo-civil-rights-intake",
+      "name": "Demonstration Civil Rights Intake Desk (fictional)",
+      "description": "Fictional recipient for complaints and petitions in this prototype.",
+      "filingTypes": ["complaint", "petition", "general-correspondence"],
+      "routingSlaHours": 24
+    }
+  ]
+}

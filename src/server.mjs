@@ -4,6 +4,8 @@ import { pathToFileURL } from "node:url";
 import { healthResponse, readinessResponse } from "./health.mjs";
 import { federalPrototypePolicy } from "./policy/federal-policy.mjs";
 import { loadAgencyRegistry, isAgencyRegistry, RegistryError } from "./policy/agency-registry.mjs";
+import { createDemoHandler, DEMO_CSP, isDemoPath } from "./demo/routes.mjs";
+import { createDemoRuntime } from "./demo/runtime.mjs";
 
 export function routePath(raw) {
   if (typeof raw !== "string" || raw.length === 0 ||
@@ -24,19 +26,28 @@ export function routePath(raw) {
   }
 }
 
-export function createPortalServer({ agencyRegistry = null, clock = Date.now } = {}) {
+const unconfiguredDemo = createDemoHandler({ backend: null, auth: null });
+
+export function createPortalServer({ agencyRegistry = null, clock = Date.now, demo = null } = {}) {
   if (typeof clock !== "function" ||
-      agencyRegistry !== null && !isAgencyRegistry(agencyRegistry))
+      agencyRegistry !== null && !isAgencyRegistry(agencyRegistry) ||
+      demo !== null && typeof demo?.handler !== "function")
     throw new TypeError("Invalid portal configuration");
-  const server = createServer((req, res) => {
+  const server = createServer(async (req, res) => {
     const target = routePath(req.url);
     let response;
+    let csp = "default-src 'none'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
     if (target.status) {
       response = { status: target.status, body: { error: target.error } };
     } else if (target.path === "/api/health") {
       response = healthResponse(target.path, req.method);
     } else if (target.path === "/api/ready") {
-      response = readinessResponse(target.path, req.method);
+      response = demo && req.method === "GET"
+        ? await demoReadiness(demo)
+        : readinessResponse(target.path, req.method);
+    } else if (isDemoPath(target.path)) {
+      csp = DEMO_CSP;
+      response = await (demo?.handler ?? unconfiguredDemo)(req, target.path, req.method);
     } else if (target.path === "/api/policy") {
       response = req.method === "GET"
         ? { status: 200, body: federalPrototypePolicy() }
@@ -58,7 +69,7 @@ export function createPortalServer({ agencyRegistry = null, clock = Date.now } =
         }
       }
     } else {
-      response = publicShellResponse(target.path, req.method, { agencyRegistry, clock })
+      response = publicShellResponse(target.path, req.method, { agencyRegistry, clock, demoEnabled: demo !== null })
         ?? { status: 404, body: { error: "not_found" } };
     }
     res.writeHead(response.status, {
@@ -66,16 +77,25 @@ export function createPortalServer({ agencyRegistry = null, clock = Date.now } =
       "cache-control": "no-store",
       "x-content-type-options": "nosniff",
       "referrer-policy": "no-referrer",
-      "content-security-policy": "default-src 'none'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+      "content-security-policy": csp,
       "permissions-policy": "camera=(), microphone=(), geolocation=()",
+      "x-frame-options": "DENY",
+      ...(response.headers ?? {}),
       ...(response.status === 405 ? { allow: response.allow ?? "GET" } : {}),
     });
-    res.end(response.headOnly ? undefined : response.rawBody ?? JSON.stringify(response.body));
+    res.end(response.headOnly || req.method === "HEAD" ? undefined : response.rawBody ?? JSON.stringify(response.body));
   });
   server.headersTimeout = 10000;
-  server.requestTimeout = 10000;
+  server.requestTimeout = 60000;
   server.maxHeadersCount = 64;
   return server;
+}
+
+async function demoReadiness(demo) {
+  const ok = await demo.ready();
+  return { status: ok ? 200 : 503, body: { schemaVersion: 1, service: "federal-electronic-filing-receipt-portal",
+    ready: ok, reason: ok ? "demo_backend_ready" : "demo_storage_unavailable", backend: "portal-local-demo",
+    upstream: "secure-intake-not-integrated", filingsAccepted: false, demoFilingsAccepted: ok } };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
@@ -97,5 +117,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       expectedSha256: registryDigest, minimumRevision,
     });
   }
-  createPortalServer({ agencyRegistry }).listen(port, host);
+  const demo = await createDemoRuntime(process.env);
+  createPortalServer({ agencyRegistry, demo }).listen(port, host);
 }

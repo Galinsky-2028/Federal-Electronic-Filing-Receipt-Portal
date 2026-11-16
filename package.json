@@ -6,12 +6,16 @@
   "scripts": {
     "start": "node src/server.mjs",
     "test": "node --test",
-    "build": "node --check src/public-shell.mjs && node --check src/health.mjs && node --check src/server.mjs && node --check src/policy/agency-registry.mjs && node --check src/policy/federal-policy.mjs && node --check src/engine/contract.mjs && node --check src/engine/client.mjs",
+    "build": "node scripts/check-syntax.mjs",
     "validate:registry": "node scripts/validate-pr-registry.mjs",
     "check": "npm run validate:registry && npm run validate:engine && npm run build && npm test",
     "validate:engine": "node scripts/verify-engine-contract.mjs"
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "pg": "^8.23.1"
   }
 }
