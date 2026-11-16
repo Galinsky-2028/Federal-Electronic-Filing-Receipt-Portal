@@ -1,0 +1,16 @@
+{
+  "schema": "ufr-demo-retention-v1",
+  "demonstration": true,
+  "notice": "Demonstration retention periods for exercising disposition in software. Not a NARA-approved records schedule and not legal advice.",
+  "defaultDays": 365,
+  "schedules": {
+    "general-correspondence": 180,
+    "administrative-claim": 730,
+    "administrative-appeal": 730,
+    "records-request": 365,
+    "records-appeal": 365,
+    "tort-claim-notice": 1095,
+    "complaint": 730,
+    "petition": 730
+  }
+}

@@ -6,13 +6,22 @@ export const DEMO_BANNER = "Not an official U.S. Government filing service. Demo
 
 export const demoNavigation = Object.freeze([
   ["/", "Overview"], ["/file", "File (demo)"], ["/track", "Track"], ["/verify", "Verify a receipt"],
-  ["/agencies", "Agency directory"], ["/help", "Help & safety"],
+  ["/agencies", "Agency directory"], ["/transparency", "Transparency"], ["/help/assistance", "Assistance"], ["/es", "Español"],
 ]);
 
-export function layout({ title, path, body, staff = false }) {
-  const nav = staff
-    ? [["/staff", "Staff queue"], ["/staff/ledger", "Ledger check"], ["/", "Public site"]]
-    : demoNavigation;
+export function staffNavigation(user) {
+  if (!user) return [["/staff", "Staff sign-in"], ["/", "Public site"]];
+  const r = (x) => user.roles.includes("admin") || user.roles.includes(x);
+  return [["/staff", "Queue"], ["/staff/notifications", "Notifications"],
+    ...(r("intake") || r("privacy_officer") ? [["/staff/reveals", "Reveals"]] : []),
+    ...(r("oversight") ? [["/staff/oversight", "Oversight"], ["/staff/ledger", "Ledger"]] : []),
+    ...(r("records_officer") ? [["/staff/records", "Records"]] : []),
+    ...(user.roles.includes("admin") ? [["/staff/admin/users", "Accounts"]] : []),
+    ["/staff/mfa", "MFA"], ["/", "Public site"]];
+}
+
+export function layout({ title, path, body, staff = false, staffUser = null }) {
+  const nav = staff ? staffNavigation(staffUser) : demoNavigation;
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">` +
     `<meta name="robots" content="noindex, nofollow"><title>${h(title)} | Federal Filing Prototype (demo)</title>` +
     `<link rel="stylesheet" href="/assets/public-shell.v1.css"><link rel="stylesheet" href="/assets/demo.v1.css"></head><body>` +
@@ -190,4 +199,6 @@ export const demoStylesheet = `.demo-notice{background:#5c1d00;color:#fff}.demo-
   `.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid #b1b4b6;padding:.5rem;text-align:left;vertical-align:top}` +
   `.status-pill{display:inline-block;padding:.3rem .8rem;border:2px solid #1d70b8;font-weight:700}.timeline li{margin:.3rem 0}` +
   `.inline-form{display:inline}.text-button{background:none;border:0;color:#1d70b8;text-decoration:underline;font:inherit;cursor:pointer;padding:0}` +
-  `@media (prefers-color-scheme:dark){.receipt{background:transparent}pre{background:#222}}`;
+  `.badge{display:inline-block;padding:0 .4rem;border:2px solid #b10e1e;color:#b10e1e;font-size:.8em}tr.emergency{background:#fff4f4}.button.secondary{background:#fff;color:#1d70b8;border:2px solid #1d70b8}.actions{display:flex;gap:1rem;flex-wrap:wrap}` +
+  `@media print{.site-header,footer,form,.skip-link{display:none}.receipt{border:1px solid #000}}` +
+  `@media (prefers-color-scheme:dark){tr.emergency{background:#3a1010}.receipt{background:transparent}pre{background:#222}}`;

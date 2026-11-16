@@ -49,6 +49,24 @@ try {
   const login = await fetch(base + "/track", { method: "POST", redirect: "manual", body: new URLSearchParams({ trackingNumber: tracking, accessCode: access }),
     headers: { origin: base, "content-type": "application/x-www-form-urlencoded" } });
   check("tracking_login", login.status === 303 && /ufr_participant=.*HttpOnly.*Secure/i.test(login.headers.get("set-cookie") ?? ""));
+  const pc = (login.headers.get("set-cookie") ?? "").split(";")[0];
+  const caseHtml = await (await fetch(base + "/track/case", { headers: { cookie: pc } })).text();
+  check("case_view_workflow_sections", /Deadlines \(demonstration estimates\)/.test(caseHtml) && /Representative access/.test(caseHtml));
+  const txt = await fetch(`${base}/track/receipts/${doc.receipt.receiptId}.txt`, { headers: { cookie: pc } });
+  check("plain_text_receipt", txt.status === 200 && /NOT A GOVERNMENT RECEIPT/.test(await txt.text()));
+  const guide = await (await fetch(base + "/file/guide/tort-claim-notice")).text();
+  check("guided_form", /Sum certain claimed/.test(guide));
+  const transparency = await (await fetch(base + "/transparency")).text();
+  check("transparency_page", /synthetic demonstration data/.test(transparency));
+  const es = await (await fetch(base + "/es")).text();
+  check("spanish_page", /No es un servicio oficial del Gobierno de los Estados Unidos/.test(es));
+  const cps = await fetch(base + "/api/ledger/checkpoints");
+  check("checkpoints_endpoint", cps.status === 200 && (await cps.json()).schema === "ufr-demo-ledger-checkpoints-v1");
+  const classified = new FormData();
+  const key2 = (await (await fetch(base + "/file")).text()).match(/name="idempotencyKey" value="([^"]+)"/)[1];
+  for (const [k, v] of Object.entries({ idempotencyKey: key2, agencyId: "demo-records-access-unit", filingType: "records-request", title: "Smoke classified check",
+    body: "TOP SECRET//NOFORN synthetic marking test", claimantName: "Smoke Test Bot", attest_demo: "yes", attest_synthetic: "yes", attest_unclassified: "yes" })) classified.append(k, v);
+  check("classified_marking_refused", (await fetch(base + "/file", { method: "POST", body: classified, headers: { origin: base } })).status === 422);
   const keys = await (await fetch(base + "/api/receipts/keys")).json();
   check("published_key_matches", keys.keys.some((k) => k.kid === doc.signature.keyId && k.d === undefined));
   const cross = await fetch(base + "/api/verify", { method: "POST", body: "{}", headers: { origin: "https://evil.example", "content-type": "application/json" } });

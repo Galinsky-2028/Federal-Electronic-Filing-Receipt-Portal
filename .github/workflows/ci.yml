@@ -39,3 +39,5 @@ jobs:
         run: npm ci
       - name: Validate plan, engine contract, syntax and full test suite (with Postgres)
         run: npm run check
+      - name: Release check (lockfile integrity, SBOM, secret scan)
+        run: npm run release:check

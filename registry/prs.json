@@ -4,7 +4,7 @@
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 60,
-  "observedAt": "2026-11-16T19:44:09Z",
+  "observedAt": "2026-11-16T20:27:00Z",
   "sourceFiles": [
     "docs/DEVELOPMENT_PLAN.md",
     "docs/ARCHITECTURE.md",
@@ -416,7 +416,9 @@
       "id": "UFR-017",
       "title": "Guided filing navigation",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F3",
       "dependsOn": [
@@ -433,13 +435,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-018",
       "title": "Guided statutory forms",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F3",
       "dependsOn": [
@@ -456,13 +461,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-019",
       "title": "Draft saving and recovery",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F3",
       "dependsOn": [
@@ -478,7 +486,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-020",
@@ -564,7 +573,9 @@
       "id": "UFR-023",
       "title": "Protected identity compartments",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F4",
       "dependsOn": [
@@ -581,13 +592,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-024",
       "title": "Staff authentication and authorization",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F4",
       "dependsOn": [
@@ -608,7 +622,7 @@
       "contributingPrs": [
         11
       ],
-      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-025",
@@ -637,7 +651,9 @@
       "id": "UFR-026",
       "title": "Durable encrypted document storage",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F4",
       "dependsOn": [
@@ -654,7 +670,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-027",
@@ -677,13 +694,19 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        13
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-028",
       "title": "Resumable evidence uploads",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F4",
       "dependsOn": [
@@ -700,7 +723,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-029",
@@ -723,7 +747,11 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        13
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-030",
@@ -746,7 +774,11 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        13
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-031",
@@ -771,9 +803,10 @@
         "Review non-happy-path behavior and upstream reuse boundary"
       ],
       "contributingPrs": [
-        11
+        11,
+        13
       ],
-      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-032",
@@ -898,7 +931,9 @@
       "id": "UFR-037",
       "title": "Agency acknowledgments and correspondence",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F5",
       "dependsOn": [
@@ -920,13 +955,15 @@
       "contributingPrs": [
         11
       ],
-      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-038",
       "title": "Routing deadlines and administrative escalation",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F5",
       "dependsOn": [
@@ -948,13 +985,15 @@
       "contributingPrs": [
         11
       ],
-      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-039",
       "title": "Versioned statutory deadline engine",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P1",
       "phase": "F6",
       "dependsOn": [
@@ -972,13 +1011,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-040",
       "title": "Federal Tort Claims Act workflow",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F6",
       "dependsOn": [
@@ -995,13 +1037,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-041",
       "title": "FOIA requests and appeals",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F6",
       "dependsOn": [
@@ -1018,13 +1063,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-042",
       "title": "General administrative claims and appeals",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F6",
       "dependsOn": [
@@ -1041,13 +1089,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-043",
       "title": "Defect notices cure and relation back",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F6",
       "dependsOn": [
@@ -1064,13 +1115,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-044",
       "title": "Emergency matter triage",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F6",
       "dependsOn": [
@@ -1087,13 +1141,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-045",
       "title": "Legally consequential notice delivery",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F6",
       "dependsOn": [
@@ -1110,7 +1167,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-046",
@@ -1141,7 +1199,9 @@
       "id": "UFR-047",
       "title": "Protected and classified-content handling",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F6",
       "dependsOn": [
@@ -1159,7 +1219,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-048",
@@ -1184,7 +1245,11 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        13
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-049",
@@ -1207,13 +1272,19 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        13
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-050",
       "title": "Independent oversight dashboard",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F7",
       "dependsOn": [
@@ -1230,13 +1301,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-051",
       "title": "Public accountability dashboard",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F7",
       "dependsOn": [
@@ -1253,13 +1327,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-052",
       "title": "Complaint and receipt-correction remedies",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F7",
       "dependsOn": [
@@ -1277,13 +1354,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-053",
       "title": "Federal records preservation and disposition",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F7",
       "dependsOn": [
@@ -1300,13 +1380,16 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-054",
       "title": "Adversarial and insider-threat security testing",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F8",
       "dependsOn": [
@@ -1324,7 +1407,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-055",
@@ -1349,7 +1433,11 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        13
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-056",
@@ -1375,9 +1463,10 @@
         "Review non-happy-path behavior and upstream reuse boundary"
       ],
       "contributingPrs": [
-        11
+        11,
+        13
       ],
-      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data) under the 2026-11-16 owner directive; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-057",
@@ -1402,13 +1491,19 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        13
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-058",
       "title": "Production observability and recovery",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        13
+      ],
       "priority": "P2",
       "phase": "F8",
       "dependsOn": [
@@ -1425,7 +1520,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-059",
@@ -1460,7 +1556,11 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "contributingPrs": [
+        13
+      ],
+      "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
     {
       "id": "UFR-060",
@@ -1641,13 +1741,43 @@
       "number": 11,
       "title": "Portal-local demonstration filing and receipt system",
       "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/11",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-16T19:43:25Z",
-      "updatedAt": "2026-11-16T19:43:25Z",
+      "updatedAt": "2026-11-16T19:49:23Z",
+      "closedAt": "2026-11-16T19:49:23Z",
+      "mergedAt": "2026-11-16T19:49:23Z",
+      "headSha": "e16a0ff5fdc640277eef3fcd7a6d2af77e034af4",
+      "baseRef": "main",
+      "mergeCommitSha": "d3d91705b7f60f18453dfa80cc75ab75a22489cd"
+    },
+    {
+      "id": 5343958180,
+      "number": 12,
+      "title": "Add end-to-end live demo smoke (post-CI on main and manual only)",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/12",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-11-16T19:51:17Z",
+      "updatedAt": "2026-11-16T19:53:41Z",
+      "closedAt": "2026-11-16T19:53:40Z",
+      "mergedAt": "2026-11-16T19:53:40Z",
+      "headSha": "b1bafec82a826bcce4fa22522e77ec9695f709ec",
+      "baseRef": "main",
+      "mergeCommitSha": "455288286217fc2316d15147221c276920fb01dc"
+    },
+    {
+      "id": 5344509220,
+      "number": 13,
+      "title": "Portal-local platform: security, records, workflows, oversight, operations",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/13",
+      "state": "open",
+      "draft": false,
+      "createdAt": "2026-11-16T20:26:40Z",
+      "updatedAt": "2026-11-16T20:26:41Z",
       "closedAt": null,
       "mergedAt": null,
-      "headSha": "29f288d509392e635d451aee235c88708ef55b4b",
+      "headSha": "8b48d847a26632f18a3c52db896e78d6ecc27547",
       "baseRef": "main",
       "mergeCommitSha": null
     }

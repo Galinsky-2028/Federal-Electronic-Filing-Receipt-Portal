@@ -1,26 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { dbTestOptions, freshPool } from "./helpers/db.mjs";
+import { dbTestOptions } from "./helpers/db.mjs";
 import { createPortalServer } from "../src/server.mjs";
-import { createAuth } from "../src/demo/auth.mjs";
-import { LocalIntakeBackend } from "../src/demo/backend.mjs";
-import { createDemoHandler } from "../src/demo/routes.mjs";
-import { generateSigningKeyEncoded, loadSigningKey } from "../src/demo/signing.mjs";
 import { createDemoRuntime } from "../src/demo/runtime.mjs";
+import { ADMIN, buildApp } from "./helpers/app.mjs";
 
 const opts = dbTestOptions();
-const STAFF = { user: "demo-staff", pass: "synthetic-staff-password-123" };
+const STAFF = ADMIN;
 
 async function serve(t) {
-  const pool = await freshPool(t);
-  const backend = new LocalIntakeBackend({ pool, signer: loadSigningKey(generateSigningKeyEncoded()) });
-  const auth = createAuth({ secret: "x".repeat(40), staffUsername: STAFF.user, staffPassword: STAFF.pass, secureCookies: false });
-  const handler = createDemoHandler({ backend, auth });
-  const server = createPortalServer({ demo: { handler, ready: async () => true } });
-  await new Promise((r) => server.listen(0, "127.0.0.1", r));
-  t.after(async () => { server.closeAllConnections(); await new Promise((r) => server.close(r)); });
-  const base = `http://127.0.0.1:${server.address().port}`;
-  return { base, backend, pool };
+  const app = await buildApp(t);
+  return { base: app.base, backend: app.backend, pool: app.pool };
 }
 const cookieOf = (res) => (res.headers.get("set-cookie") ?? "").split(";")[0];
 const post = (base, path, body, { cookie, origin = base, type } = {}) => fetch(base + path, { method: "POST", redirect: "manual", body,
@@ -139,8 +129,8 @@ test("cross-origin posts, missing attestations, oversize and bad types fail clos
 
 test("runtime refuses partial configuration and stays off when unconfigured", async () => {
   assert.equal(await createDemoRuntime({}), null);
-  await assert.rejects(createDemoRuntime({ DATABASE_URL: "postgres://x@localhost/y" }), /missing RECEIPT_SIGNING_KEY, SESSION_SECRET/);
-  await assert.rejects(createDemoRuntime({ DATABASE_URL: "postgres://x@localhost/y", RECEIPT_SIGNING_KEY: "bm90LWEta2V5", SESSION_SECRET: "x".repeat(40) }),
+  await assert.rejects(createDemoRuntime({ DATABASE_URL: "postgres://x@localhost/y" }), /missing RECEIPT_SIGNING_KEY, SESSION_SECRET, DATA_ENCRYPTION_KEY/);
+  await assert.rejects(createDemoRuntime({ DATABASE_URL: "postgres://x@localhost/y", RECEIPT_SIGNING_KEY: "bm90LWEta2V5", SESSION_SECRET: "x".repeat(40), DATA_ENCRYPTION_KEY: "0".repeat(64) }),
     /not a valid PKCS#8 key/);
   const server = createPortalServer();
   await new Promise((r) => server.listen(0, "127.0.0.1", r));

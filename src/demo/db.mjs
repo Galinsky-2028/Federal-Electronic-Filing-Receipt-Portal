@@ -144,6 +144,115 @@ CREATE TRIGGER ${t}_no_truncate BEFORE TRUNCATE ON ${t}
   FOR EACH STATEMENT EXECUTE FUNCTION ufr_forbid_mutation();`).join("\n")}
 `,
   },
+  {
+    id: "0002_security_data_claimant",
+    sql: `
+ALTER TABLE submissions ADD COLUMN structured jsonb NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE submissions ADD COLUMN emergency boolean NOT NULL DEFAULT false;
+ALTER TABLE submissions ADD COLUMN identity_protected boolean NOT NULL DEFAULT false;
+CREATE TABLE data_keys (
+  id uuid PRIMARY KEY, purpose text NOT NULL CHECK (purpose IN ('identity', 'document', 'content')), subject uuid NOT NULL,
+  wrapped bytea NOT NULL, created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+  destroyed_at timestamptz, destroyed_reason text
+);
+CREATE INDEX data_keys_subject ON data_keys (subject);
+ALTER TABLE documents ADD COLUMN encryption text NOT NULL DEFAULT 'none' CHECK (encryption IN ('none', 'aes-256-gcm-envelope'));
+ALTER TABLE documents ADD COLUMN key_id uuid REFERENCES data_keys(id);
+CREATE TABLE identity_vault (
+  submission_id uuid PRIMARY KEY REFERENCES submissions(id), key_id uuid NOT NULL REFERENCES data_keys(id), sealed bytea NOT NULL
+);
+CREATE TABLE content_vault (
+  submission_id uuid PRIMARY KEY REFERENCES submissions(id), key_id uuid NOT NULL REFERENCES data_keys(id), sealed bytea NOT NULL
+);
+CREATE TRIGGER content_vault_append_only BEFORE UPDATE OR DELETE ON content_vault FOR EACH ROW EXECUTE FUNCTION ufr_forbid_mutation();
+CREATE TABLE scan_results (
+  id bigserial PRIMARY KEY, document_id uuid NOT NULL REFERENCES documents(id),
+  verdict text NOT NULL CHECK (verdict IN ('clean', 'suspicious', 'infected', 'error')),
+  engine text NOT NULL, detail text NOT NULL, at timestamptz NOT NULL DEFAULT clock_timestamp(), ledger_seq bigint REFERENCES ledger_entries(seq)
+);
+CREATE TABLE staff_users (
+  id uuid PRIMARY KEY, username text NOT NULL UNIQUE CHECK (username ~ '^[a-z0-9._-]{3,40}$'),
+  password_hash text NOT NULL, roles text[] NOT NULL, totp_secret text, mfa_enabled boolean NOT NULL DEFAULT false,
+  totp_last_step bigint NOT NULL DEFAULT -1, disabled boolean NOT NULL DEFAULT false,
+  failed_logins integer NOT NULL DEFAULT 0, locked_until timestamptz, created_at timestamptz NOT NULL DEFAULT clock_timestamp()
+);
+CREATE TABLE reveal_requests (
+  id uuid PRIMARY KEY, submission_id uuid NOT NULL REFERENCES submissions(id), requested_by uuid NOT NULL REFERENCES staff_users(id),
+  reason text NOT NULL, requested_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+  approved_by uuid REFERENCES staff_users(id), approved_at timestamptz, consumed_at timestamptz, expires_at timestamptz,
+  CHECK (approved_by IS NULL OR approved_by <> requested_by)
+);
+CREATE TABLE drafts (
+  code_hash text PRIMARY KEY, payload jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT clock_timestamp(), expires_at timestamptz NOT NULL
+);
+CREATE TABLE delegations (
+  id uuid PRIMARY KEY, root_id uuid NOT NULL REFERENCES submissions(id), label text NOT NULL,
+  scope text NOT NULL CHECK (scope IN ('view', 'view_supplement')), code_salt text NOT NULL, code_hash text NOT NULL UNIQUE,
+  created_at timestamptz NOT NULL DEFAULT clock_timestamp(), revoked_at timestamptz
+);
+CREATE TABLE corrections (
+  id uuid PRIMARY KEY, submission_id uuid NOT NULL REFERENCES submissions(id),
+  kind text NOT NULL CHECK (kind IN ('receipt_correction', 'processing_complaint', 'withdrawal')),
+  statement text NOT NULL, filed_by text NOT NULL, filed_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+  decision text CHECK (decision IN ('accepted', 'denied')), decision_note text, decided_by uuid REFERENCES staff_users(id),
+  decided_at timestamptz, correction_document jsonb, ledger_seq bigint REFERENCES ledger_entries(seq)
+);
+CREATE TABLE legal_holds (
+  submission_id uuid PRIMARY KEY REFERENCES submissions(id), reason text NOT NULL, placed_by uuid NOT NULL REFERENCES staff_users(id),
+  placed_at timestamptz NOT NULL DEFAULT clock_timestamp(), released_at timestamptz
+);
+CREATE TABLE dispositions (
+  submission_id uuid PRIMARY KEY REFERENCES submissions(id), disposed_at timestamptz NOT NULL, rule text NOT NULL, ledger_seq bigint NOT NULL REFERENCES ledger_entries(seq)
+);
+CREATE TABLE notification_outbox (
+  id bigserial PRIMARY KEY, channel text NOT NULL CHECK (channel IN ('staff-queue', 'claimant-portal', 'email-simulated')),
+  audience text NOT NULL, template text NOT NULL, payload jsonb NOT NULL,
+  state text NOT NULL DEFAULT 'pending' CHECK (state IN ('pending', 'delivered', 'dead')), attempts integer NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT clock_timestamp(), delivered_at timestamptz
+);
+CREATE TRIGGER identity_vault_append_only BEFORE UPDATE OR DELETE ON identity_vault FOR EACH ROW EXECUTE FUNCTION ufr_forbid_mutation();
+CREATE TRIGGER scan_results_append_only BEFORE UPDATE OR DELETE ON scan_results FOR EACH ROW EXECUTE FUNCTION ufr_forbid_mutation();
+CREATE TRIGGER dispositions_append_only BEFORE UPDATE OR DELETE ON dispositions FOR EACH ROW EXECUTE FUNCTION ufr_forbid_mutation();
+`,
+  },
+  {
+    id: "0003_workflows_oversight_operations",
+    sql: `
+CREATE TABLE deadlines (
+  id bigserial PRIMARY KEY, submission_id uuid NOT NULL REFERENCES submissions(id), rule_id text NOT NULL, rule_version text NOT NULL,
+  start_date date NOT NULL, due_date date NOT NULL, due_at timestamptz NOT NULL,
+  state text NOT NULL DEFAULT 'open' CHECK (state IN ('open', 'met', 'missed', 'tolled', 'cancelled')),
+  tolled_at timestamptz, closed_at timestamptz, ledger_seq bigint REFERENCES ledger_entries(seq),
+  created_at timestamptz NOT NULL DEFAULT clock_timestamp()
+);
+CREATE INDEX deadlines_open ON deadlines (state, due_at);
+CREATE TABLE notices (
+  id uuid PRIMARY KEY, submission_id uuid NOT NULL REFERENCES submissions(id),
+  kind text NOT NULL CHECK (kind IN ('acknowledgement', 'information_request', 'defect', 'determination', 'general', 'claimant_reply')),
+  author text NOT NULL, body text NOT NULL, sent_at timestamptz NOT NULL, cure_due_at timestamptz,
+  ledger_seq bigint NOT NULL REFERENCES ledger_entries(seq), read_at timestamptz, read_ledger_seq bigint REFERENCES ledger_entries(seq),
+  cure_outcome text CHECK (cure_outcome IN ('cured_relates_back', 'cured_late'))
+);
+CREATE INDEX notices_submission ON notices (submission_id, sent_at);
+CREATE TABLE ledger_checkpoints (
+  seq bigint PRIMARY KEY, head_hash text NOT NULL, created_at timestamptz NOT NULL, key_id text NOT NULL, signature text NOT NULL
+);
+CREATE TRIGGER ledger_checkpoints_append_only BEFORE UPDATE OR DELETE ON ledger_checkpoints FOR EACH ROW EXECUTE FUNCTION ufr_forbid_mutation();
+CREATE TABLE upload_sessions (
+  id uuid PRIMARY KEY, token_hash text NOT NULL, filename text NOT NULL, media_type text NOT NULL, total_size integer NOT NULL,
+  received integer NOT NULL DEFAULT 0, completed boolean NOT NULL DEFAULT false, consumed boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT clock_timestamp(), expires_at timestamptz NOT NULL
+);
+CREATE TABLE upload_chunks (
+  session_id uuid NOT NULL REFERENCES upload_sessions(id) ON DELETE CASCADE, start_offset integer NOT NULL, data bytea NOT NULL,
+  PRIMARY KEY (session_id, start_offset)
+);
+CREATE TABLE escalations (
+  submission_id uuid NOT NULL REFERENCES submissions(id), kind text NOT NULL, ref text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT clock_timestamp(), PRIMARY KEY (submission_id, kind, ref)
+);
+`,
+  },
 ];
 
 const MIGRATION_LOCK = 724_001_004;
