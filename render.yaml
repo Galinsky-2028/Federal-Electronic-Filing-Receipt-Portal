@@ -6,6 +6,8 @@
 #   DATABASE_URL         Neon Postgres connection string (sslmode=require)
 #   RECEIPT_SIGNING_KEY  base64 PKCS#8 DER Ed25519 private key
 #   SESSION_SECRET       >= 32 random characters
+#   DATA_ENCRYPTION_KEY  64 hex chars (envelope-encryption key-encryption key)
+#   METRICS_TOKEN / EVENTS_FEED_TOKEN (optional bearer tokens)
 #   STAFF_USERNAME / STAFF_PASSWORD (>= 16 chars) for the demo staff console
 # With none of the first three set, demo filing is disabled; with only some
 # set, startup aborts. Migrations run on startup under an advisory lock.
@@ -35,6 +37,12 @@ services:
       - key: RECEIPT_SIGNING_KEY
         sync: false
       - key: SESSION_SECRET
+        sync: false
+      - key: DATA_ENCRYPTION_KEY
+        sync: false
+      - key: METRICS_TOKEN
+        sync: false
+      - key: EVENTS_FEED_TOKEN
         sync: false
       - key: STAFF_USERNAME
         sync: false

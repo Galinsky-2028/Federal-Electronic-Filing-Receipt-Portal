@@ -9,7 +9,8 @@
     "build": "node scripts/check-syntax.mjs",
     "validate:registry": "node scripts/validate-pr-registry.mjs",
     "check": "npm run validate:registry && npm run validate:engine && npm run build && npm test",
-    "validate:engine": "node scripts/verify-engine-contract.mjs"
+    "validate:engine": "node scripts/verify-engine-contract.mjs",
+    "release:check": "node scripts/release-check.mjs"
   },
   "engines": {
     "node": ">=22"

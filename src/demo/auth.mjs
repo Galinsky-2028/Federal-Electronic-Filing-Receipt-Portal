@@ -52,7 +52,7 @@ export function createAuth({ secret, staffUsername, staffPassword, secureCookies
     issueParticipant: (rootId) => issue(PARTICIPANT_COOKIE, "p", rootId, PARTICIPANT_TTL_MS),
     issueStaff: (username) => issue(STAFF_COOKIE, "s", username, STAFF_TTL_MS),
     participant: (cookies) => read(cookies, PARTICIPANT_COOKIE, "p"),
-    staff: (cookies) => staffConfigured ? read(cookies, STAFF_COOKIE, "s") : null,
+    staff: (cookies) => read(cookies, STAFF_COOKIE, "s"), // account existence and roles are checked against staff_users per request
     clear: (name) => `${name}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureCookies ? "; Secure" : ""}`,
     checkStaffPassword(username, password) {
       if (!staffConfigured) return false;

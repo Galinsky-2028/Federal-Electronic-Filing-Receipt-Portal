@@ -3,6 +3,8 @@ import { canonicalDigest, sha256Hex } from "./canonical.mjs";
 import { withTransaction } from "./db.mjs";
 import { appendLedger } from "./ledger.mjs";
 import { buildReceipt, signReceipt, verifyReceiptDocument } from "./receipt.mjs";
+import { open as openSealed, seal } from "../platform/crypto.mjs";
+import { detectClassifiedMarking, scanDocument } from "../platform/safety.mjs";
 
 /**
  * IntakeBackend seam. The portal's routes call only these methods, so a
@@ -17,14 +19,14 @@ import { buildReceipt, signReceipt, verifyReceiptDocument } from "./receipt.mjs"
  */
 
 const ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
-function code(length) {
+export function code(length) {
   const bytes = randomBytes(length);
   return Array.from(bytes, (b) => ALPHABET[b & 31]).join("");
 }
 export const newTrackingNumber = () => { const c = code(12); return `DEMO-${c.slice(0, 4)}-${c.slice(4, 8)}-${c.slice(8)}`; };
 const newReceiptId = () => "RCPT-DEMO-" + code(20);
 const newAccessCode = () => code(24);
-const accessHash = (salt, accessCode) => sha256Hex(`${salt}:${accessCode}`);
+export const accessHash = (salt, accessCode) => sha256Hex(`${salt}:${accessCode}`);
 
 export const STAFF_STATUSES = Object.freeze(["under_review", "information_requested", "referred", "closed"]);
 export const LIMITS = Object.freeze({ title: 200, body: 20_000, name: 120, contact: 200, files: 3,
@@ -97,8 +99,9 @@ export function buildManifest({ submissionId, kind, parentReceiptId, agencyId, f
 }
 
 export class LocalIntakeBackend {
-  constructor({ pool, signer, appNow = () => Date.now(), maxRoutingAttempts = 8 }) {
-    this.pool = pool; this.signer = signer; this.appNow = appNow; this.maxRoutingAttempts = maxRoutingAttempts;
+  constructor({ pool, signer, keys = null, appNow = () => Date.now(), maxRoutingAttempts = 8 }) {
+    this.pool = pool; this.signer = signer; this.keys = keys; this.appNow = appNow; this.maxRoutingAttempts = maxRoutingAttempts;
+    this.onFiled = []; // post-commit hooks for new (non-replayed) filings
   }
 
   publicKeys() { return [this.signer.publicJwk]; }
@@ -119,13 +122,23 @@ export class LocalIntakeBackend {
   async fileSubmission(input, { parentRootId = null } = {}) {
     const agencies = await this.listAgencies();
     const v = validateFiling(input, agencies);
+    const marking = detectClassifiedMarking(v.title, v.body, ...v.docs.map((d) => d.content));
+    if (marking) {
+      // UFR-047: stop collection. Record only a content-free event naming the rule.
+      await withTransaction(this.pool, (client) => appendLedger(client, { eventType: "intake.classified_marking_refused",
+        subject: "intake", appNow: this.appNow(), payload: { rule: marking } }));
+      throw new IntakeError("classified_marking", 422);
+    }
+    const emergency = input.emergency === true;
+    const structured = input.structured && typeof input.structured === "object" ? input.structured : {};
     const requestSha256 = canonicalDigest({ agencyId: v.agency.id, filingType: v.filingType, title: v.title, body: v.body,
       claimantName: v.claimantName, claimantContact: v.claimantContact, parentRootId,
-      docs: v.docs.map((d) => [d.filename, d.mediaType, d.sha256]) });
+      docs: v.docs.map((d) => [d.filename, d.mediaType, d.sha256]), emergency, structured });
     const existing = await this.#replay(v.idempotencyKey, requestSha256);
     if (existing) return existing;
+    let created;
     try {
-      return await withTransaction(this.pool, async (client) => {
+      created = await withTransaction(this.pool, async (client) => {
         let parent = null;
         if (parentRootId) {
           parent = (await client.query(`SELECT s.id, s.access_salt, s.access_hash, s.agency_id, r.receipt_id
@@ -143,19 +156,41 @@ export class LocalIntakeBackend {
         const hash = parent ? parent.access_hash : accessHash(salt, accessCode);
         const m = buildManifest({ submissionId, kind, parentReceiptId: parent?.receipt_id, agencyId: v.agency.id,
           filingType: v.filingType, docs: v.docs,
-          text: { title: v.title, body: v.body, claimantName: v.claimantName, claimantContact: v.claimantContact } });
+          text: { title: v.title, body: v.body, claimantName: v.claimantName, claimantContact: v.claimantContact, structured } });
+        const scans = v.docs.map((d) => ({ ordinal: d.ordinal, ...scanDocument(d.mediaType, d.content) }));
         const entry = await appendLedger(client, { eventType: "filing.received", subject: receiptId, appNow: this.appNow(),
           payload: { receiptId, submissionId, trackingNumber, kind, amends: parent?.receipt_id ?? null,
-            agencyId: v.agency.id, manifestSha256: m.sha256 } });
+            agencyId: v.agency.id, manifestSha256: m.sha256, emergency, scans: scans.map((x) => x.verdict),
+            identityProtected: Boolean(this.keys) } });
+        const protect = Boolean(this.keys);
         await client.query(`INSERT INTO submissions (id, tracking_number, access_salt, access_hash, kind, parent_id,
-          agency_id, filing_type, title, body, claimant_name, claimant_contact, idempotency_key, request_sha256, received_at)
-          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
-        [submissionId, trackingNumber, salt, hash, kind, parent?.id ?? null, v.agency.id, v.filingType, v.title, v.body,
-          v.claimantName, v.claimantContact, v.idempotencyKey, requestSha256, entry.recordedAt]);
+          agency_id, filing_type, title, body, claimant_name, claimant_contact, idempotency_key, request_sha256, received_at,
+          structured, emergency, identity_protected)
+          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
+        [submissionId, trackingNumber, salt, hash, kind, parent?.id ?? null, v.agency.id, v.filingType, v.title, protect ? "[encrypted]" : v.body,
+          protect ? "[protected]" : v.claimantName, protect ? "" : v.claimantContact, v.idempotencyKey, requestSha256,
+          entry.recordedAt, structured, emergency, protect]);
+        if (protect) {
+          const key = await this.keys.create(client, "identity", submissionId);
+          await client.query("INSERT INTO identity_vault (submission_id, key_id, sealed) VALUES ($1,$2,$3)", [submissionId, key.id,
+            seal(key.dek, Buffer.from(JSON.stringify({ claimantName: v.claimantName, claimantContact: v.claimantContact })), `identity:${submissionId}`)]);
+          const ck = await this.keys.create(client, "content", submissionId);
+          await client.query("INSERT INTO content_vault (submission_id, key_id, sealed) VALUES ($1,$2,$3)", [submissionId, ck.id,
+            seal(ck.dek, Buffer.from(JSON.stringify({ body: v.body, structured })), `content:${submissionId}`)]);
+        }
         for (const d of v.docs) {
-          await client.query(`INSERT INTO documents (id, submission_id, ordinal, filename, media_type, size_bytes, sha256, content)
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, [randomUUID(), submissionId, d.ordinal, d.filename, d.mediaType,
-            d.sizeBytes, d.sha256, d.content]);
+          const docId = randomUUID();
+          let content = d.content; let keyId = null;
+          if (protect) {
+            const key = await this.keys.create(client, "document", submissionId);
+            content = seal(key.dek, d.content, `doc:${docId}`); keyId = key.id;
+          }
+          await client.query(`INSERT INTO documents (id, submission_id, ordinal, filename, media_type, size_bytes, sha256, content, encryption, key_id)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, [docId, submissionId, d.ordinal, d.filename, d.mediaType,
+            d.sizeBytes, d.sha256, content, protect ? "aes-256-gcm-envelope" : "none", keyId]);
+          const scan = scans.find((x) => x.ordinal === d.ordinal);
+          await client.query("INSERT INTO scan_results (document_id, verdict, engine, detail, ledger_seq) VALUES ($1,$2,'portal-heuristic-v1',$3,$4)",
+            [docId, scan.verdict, scan.detail, entry.seq]);
         }
         await client.query("INSERT INTO manifests (submission_id, manifest, sha256) VALUES ($1,$2,$3)",
           [submissionId, m.manifest, m.sha256]);
@@ -167,7 +202,12 @@ export class LocalIntakeBackend {
           [receiptId, submissionId, document, entry.seq]);
         await client.query(`INSERT INTO routing_outbox (submission_id, agency_id, due_by)
           VALUES ($1, $2, $3::timestamptz + make_interval(hours => $4))`,
-        [submissionId, v.agency.id, entry.recordedAt, v.agency.routingSlaHours]);
+        [submissionId, v.agency.id, entry.recordedAt, emergency ? 4 : v.agency.routingSlaHours]);
+        await client.query(`INSERT INTO notification_outbox (channel, audience, template, payload) VALUES
+          ('staff-queue', $1, $2, $3), ('claimant-portal', $4, 'receipt.issued', $5)`,
+        [emergency ? "role:intake" : `agency:${v.agency.id}`, emergency ? "filing.emergency" : "filing.received",
+          { submissionId, receiptId, emergency }, `root:${parent?.id ?? submissionId}`, { receiptId, trackingNumber }]);
+        if (input.draftCodeHash) await client.query("DELETE FROM drafts WHERE code_hash = $1", [input.draftCodeHash]);
         await client.query(`INSERT INTO status_events (submission_id, status, note, actor, at, ledger_seq)
           VALUES ($1, 'received', 'Demonstration receipt issued.', 'system', $2, $3)`,
         [submissionId, entry.recordedAt, entry.seq]);
@@ -181,6 +221,8 @@ export class LocalIntakeBackend {
       }
       throw error;
     }
+    for (const hook of this.onFiled) await hook(created);
+    return created;
   }
 
   async #replay(idempotencyKey, requestSha256) {
@@ -206,6 +248,26 @@ export class LocalIntakeBackend {
     return ok ? (row.parent_id ?? row.id) : null;
   }
 
+  /**
+   * Participant session: the owner's access code or a delegate code
+   * (UFR delegation). Returns { rootId, scope, delegationId } or null.
+   */
+  async openParticipantSession(trackingNumber, accessCodeInput) {
+    const owner = await this.openParticipant(trackingNumber, accessCodeInput);
+    if (owner) return { rootId: owner, scope: "owner", delegationId: null };
+    const tracking = typeof trackingNumber === "string" ? trackingNumber.trim().toUpperCase() : "";
+    const supplied = typeof accessCodeInput === "string" ? accessCodeInput.trim().toUpperCase().replace(/[\s-]/g, "") : "";
+    if (!/^[0-9A-Z]{24}$/.test(supplied)) return null;
+    const rows = (await this.pool.query(`SELECT d.id, d.root_id, d.scope, d.code_salt, d.code_hash FROM delegations d
+      JOIN submissions s ON (s.id = d.root_id OR s.parent_id = d.root_id) WHERE s.tracking_number = $1 AND d.revoked_at IS NULL`,
+    [tracking])).rows;
+    for (const r of rows) {
+      if (timingSafeEqual(Buffer.from(accessHash(r.code_salt, supplied), "hex"), Buffer.from(r.code_hash, "hex")))
+        return { rootId: r.root_id, scope: r.scope, delegationId: r.id };
+    }
+    return null;
+  }
+
   async participantView(rootId) {
     const { rows } = await this.pool.query(`SELECT s.id, s.tracking_number, s.kind, s.title, s.filing_type,
         s.received_at, a.name AS agency_name, r.document,
@@ -223,13 +285,14 @@ export class LocalIntakeBackend {
     history: history.map((h) => ({ status: h.status, note: h.note, at: h.at.toISOString() })) };
   }
 
-  async listSubmissions({ limit = 100 } = {}) {
+  async listSubmissions({ limit = 100, agencyIds = null } = {}) {
     const { rows } = await this.pool.query(`SELECT s.id, s.tracking_number, s.kind, s.title, s.filing_type, s.received_at,
-        a.name AS agency_name, o.state AS routing_state, o.due_by,
+        s.emergency, s.agency_id, a.name AS agency_name, o.state AS routing_state, o.due_by,
         (SELECT status FROM status_events e WHERE e.submission_id = s.id ORDER BY e.id DESC LIMIT 1) AS status
       FROM submissions s JOIN agencies a ON a.id = s.agency_id LEFT JOIN routing_outbox o ON o.submission_id = s.id
-      ORDER BY s.received_at DESC LIMIT $1`, [limit]);
-    return rows.map((r) => ({ id: r.id, trackingNumber: r.tracking_number, kind: r.kind, title: r.title,
+      WHERE ($2::text[] IS NULL OR s.agency_id = ANY($2))
+      ORDER BY s.emergency DESC, s.received_at DESC LIMIT $1`, [limit, agencyIds]);
+    return rows.map((r) => ({ id: r.id, emergency: r.emergency, agencyId: r.agency_id, trackingNumber: r.tracking_number, kind: r.kind, title: r.title,
       filingType: r.filing_type, receivedAt: r.received_at.toISOString(), agencyName: r.agency_name,
       routing: r.routing_state, routingDueBy: r.due_by?.toISOString() ?? null, status: r.status }));
   }
@@ -242,18 +305,36 @@ export class LocalIntakeBackend {
       JOIN receipts r ON r.submission_id = s.id LEFT JOIN routing_outbox o ON o.submission_id = s.id
       LEFT JOIN agency_inbox_receipts i ON i.submission_id = s.id WHERE s.id = $1`, [id])).rows[0];
     if (!s) return null;
-    const docs = (await this.pool.query(`SELECT id, ordinal, filename, media_type, size_bytes, sha256 FROM documents
-      WHERE submission_id = $1 ORDER BY ordinal`, [id])).rows;
+    const docs = (await this.pool.query(`SELECT d.id, d.ordinal, d.filename, d.media_type, d.size_bytes, d.sha256, d.encryption,
+        (SELECT verdict FROM scan_results r WHERE r.document_id = d.id ORDER BY r.id DESC LIMIT 1) AS verdict,
+        (SELECT detail FROM scan_results r WHERE r.document_id = d.id ORDER BY r.id DESC LIMIT 1) AS scan_detail
+      FROM documents d WHERE d.submission_id = $1 ORDER BY d.ordinal`, [id])).rows;
     const history = (await this.pool.query(`SELECT status, note, actor, at, ledger_seq FROM status_events
       WHERE submission_id = $1 ORDER BY id`, [id])).rows;
-    return { ...s, documents: docs, history };
+    let content = { body: s.body, structured: s.structured };
+    if (s.body === "[encrypted]") {
+      const v = (await this.pool.query("SELECT key_id, sealed FROM content_vault WHERE submission_id = $1", [id])).rows[0];
+      try { content = JSON.parse(openSealed(await this.keys.get(this.pool, v.key_id), v.sealed, `content:${id}`).toString("utf8")); }
+      catch (error) { if (error?.code !== "data_key_destroyed") throw error; content = { body: "[disposed under the retention schedule]", structured: {} }; }
+    }
+    return { ...s, body: content.body, structured: content.structured, documents: docs, history };
   }
 
+  /** Decrypts, integrity-checks and enforces quarantine: only a "clean" latest scan may be released. */
   async document(id) {
     if (!/^[0-9a-f-]{36}$/.test(id)) return null;
-    const row = (await this.pool.query("SELECT filename, media_type, content, sha256 FROM documents WHERE id = $1", [id])).rows[0];
-    if (!row || sha256Hex(row.content) !== row.sha256) return null; // integrity re-check on every read
-    return row;
+    const row = (await this.pool.query(`SELECT d.id, d.filename, d.media_type, d.content, d.sha256, d.encryption, d.key_id,
+        (SELECT verdict FROM scan_results r WHERE r.document_id = d.id ORDER BY r.id DESC LIMIT 1) AS verdict
+      FROM documents d WHERE d.id = $1`, [id])).rows[0];
+    if (!row) return null;
+    if (row.verdict && row.verdict !== "clean") return { quarantined: true, verdict: row.verdict, filename: row.filename };
+    let content = row.content;
+    if (row.encryption !== "none") {
+      try { content = openSealed(await this.keys.get(this.pool, row.key_id), row.content, `doc:${row.id}`); }
+      catch (error) { if (error?.code === "data_key_destroyed") return { disposed: true, filename: row.filename }; throw error; }
+    }
+    if (sha256Hex(content) !== row.sha256) return null; // integrity re-check on every read
+    return { filename: row.filename, media_type: row.media_type, content, sha256: row.sha256 };
   }
 
   /** Staff review state is separate from the immutable original and receipt. */
