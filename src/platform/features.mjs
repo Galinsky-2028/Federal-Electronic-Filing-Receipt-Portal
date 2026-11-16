@@ -9,6 +9,7 @@ import { RULESET_VERSION } from "./deadlines.mjs";
 import { GUIDE, structuredForms } from "./guided.mjs";
 import { hasRole } from "./services.mjs";
 import { WorkflowServices } from "./workflows.mjs";
+import { CaiaeClient, CaiaeEventSync, caiaeConfig } from "./caiae-sync.mjs";
 import { filePage2 } from "../demo/views2.mjs";
 
 const UUID = "[0-9a-f-]{36}";
@@ -107,6 +108,9 @@ export async function loadFeatureModules({ backend, platform, env = {}, logger =
   backend.onFiled.push((result) => workflows.onFiled(result));
   platform.uploads = uploads;
   platform.workflows = workflows;
+  const caiae = caiaeConfig(env);
+  const caiaeSync = caiae ? new CaiaeEventSync({ pool: backend.pool, client: new CaiaeClient({ ...caiae, fetchImpl: env.__caiaeFetch }),
+    externalRef: caiae.externalRef, keyId: backend.signer.keyId, logger }) : null;
 
   async function oversightData() {
     const q = async (sql, p = []) => (await backend.pool.query(sql, p)).rows;
@@ -124,7 +128,8 @@ export async function loadFeatureModules({ backend, platform, env = {}, logger =
       verifyLedger(backend.pool),
       q("SELECT seq, created_at FROM ledger_checkpoints ORDER BY seq DESC LIMIT 1"),
     ]);
-    return { statuses, deadlines, routing, reveals: reveals[0], misc: misc[0], ledger, checkpoint: checkpoint[0] ?? null };
+    return { statuses, deadlines, routing, reveals: reveals[0], misc: misc[0], ledger, checkpoint: checkpoint[0] ?? null,
+      caiae: caiaeSync ? await caiaeSync.status() : null };
   }
 
   async function transparencyData() {
@@ -151,6 +156,7 @@ export async function loadFeatureModules({ backend, platform, env = {}, logger =
       line("ufr_routing_dead", "Dead-lettered routing deliveries", r.routing_dead), line("ufr_deadlines_open", "Open deadlines", r.deadlines_open),
       line("ufr_deadlines_missed", "Missed deadlines", r.deadlines_missed), line("ufr_notifications_pending", "Pending notifications", r.notifications_pending),
       line("ufr_checkpoint_age_seconds", "Age of newest signed ledger checkpoint", r.checkpoint_age ?? -1),
+      ...(caiaeSync ? [line("ufr_caiae_event_lag", "Ledger entries not yet delivered to the Compliance Engine", (await caiaeSync.status()).lag)] : []),
       line("process_resident_memory_bytes", "RSS", process.memoryUsage().rss), line("process_uptime_seconds", "Uptime", Math.floor(process.uptime()))].join("\n") + "\n";
   }
 
@@ -264,7 +270,8 @@ export async function loadFeatureModules({ backend, platform, env = {}, logger =
           `<section class="${o.ledger.valid ? "verify-ok" : "error-summary"}" role="status"><p>Ledger hash chain ${o.ledger.valid ? "valid" : "INVALID"} across ${o.ledger.checked} entries${o.checkpoint ? `; latest signed checkpoint #${h(o.checkpoint.seq)} at ${h(when(o.checkpoint.created_at))}` : ""}.</p></section>` +
           `<dl class="facts"><dt>Filings</dt><dd>${o.misc.filings} (${o.misc.emergencies} emergency)</dd><dt>Open corrections and complaints</dt><dd>${o.misc.open_corrections}</dd><dt>Quarantined attachments</dt><dd>${o.misc.quarantined}</dd>` +
           `<dt>Classified-marking refusals</dt><dd>${o.misc.classified_refusals}</dd><dt>Identity reveals</dt><dd>${o.reveals.requested} requested, ${o.reveals.approved} approved, ${o.reveals.consumed} viewed</dd>` +
-          `<dt>Legal holds / dispositions</dt><dd>${o.misc.holds} / ${o.misc.disposed}</dd><dt>Active staff without MFA</dt><dd>${o.misc.staff_without_mfa}</dd></dl>` +
+          `<dt>Legal holds / dispositions</dt><dd>${o.misc.holds} / ${o.misc.disposed}</dd><dt>Active staff without MFA</dt><dd>${o.misc.staff_without_mfa}</dd>` +
+          `<dt>Compliance Engine event feed (UFR-048)</dt><dd>${o.caiae ? `delivered through #${o.caiae.deliveredSeq} of #${o.caiae.headSeq} (lag ${o.caiae.lag})${o.caiae.lastError ? ` · retrying after: ${h(o.caiae.lastError)}` : ""}` : "not configured"}</dd></dl>` +
           `<div class="table-wrap"><table><caption>Current status</caption><tbody>${rows(o.statuses, "st", "n")}</tbody></table></div>` +
           `<div class="table-wrap"><table><caption>Deadlines</caption><tbody>${rows(o.deadlines, "state", "n")}</tbody></table></div>` +
           `<div class="table-wrap"><table><caption>Routing</caption><tbody>${o.routing.map((r) => `<tr><td>${h(r.state)}</td><td>${r.n}${r.overdue ? ` (${r.overdue} overdue)` : ""}</td></tr>`).join("")}</tbody></table></div>` }));
@@ -275,8 +282,8 @@ export async function loadFeatureModules({ backend, platform, env = {}, logger =
   }
 
   return {
-    names: ["guided-forms", "workflows", "deadlines", "notices", "uploads", "oversight", "transparency", "checkpoints", "metrics", "events-feed", "i18n-es"],
+    names: [...(caiaeSync ? ["caiae-event-sync"] : []), "guided-forms", "workflows", "deadlines", "notices", "uploads", "oversight", "transparency", "checkpoints", "metrics", "events-feed", "i18n-es"],
     extensions: [extension], structuredForms, workflows, uploads,
-    jobs: [() => workflows.runJobs()],
+    jobs: [() => workflows.runJobs(), ...(caiaeSync ? [() => caiaeSync.run()] : [])], caiaeSync,
   };
 }

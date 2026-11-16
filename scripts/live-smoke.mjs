@@ -67,6 +67,10 @@ try {
   for (const [k, v] of Object.entries({ idempotencyKey: key2, agencyId: "demo-records-access-unit", filingType: "records-request", title: "Smoke classified check",
     body: "TOP SECRET//NOFORN synthetic marking test", claimantName: "Smoke Test Bot", attest_demo: "yes", attest_synthetic: "yes", attest_unclassified: "yes" })) classified.append(k, v);
   check("classified_marking_refused", (await fetch(base + "/file", { method: "POST", body: classified, headers: { origin: base } })).status === 422);
+  const esFile = await fetch(base + "/file", { headers: { cookie: "ufr_lang=es" } });
+  check("spanish_filing_form", esFile.headers.get("content-language") === "es" && /Enviar una presentación de demostración/.test(await esFile.text()));
+  const esCase = await (await fetch(base + "/track/case", { headers: { cookie: `${pc}; ufr_lang=es` } })).text();
+  check("spanish_claimant_flow", /Estado actual/.test(esCase) && /ACUSE DE DEMOSTRACIÓN · NO ES UN ACUSE DEL GOBIERNO/.test(esCase));
   const keys = await (await fetch(base + "/api/receipts/keys")).json();
   check("published_key_matches", keys.keys.some((k) => k.kid === doc.signature.keyId && k.d === undefined));
   const cross = await fetch(base + "/api/verify", { method: "POST", body: "{}", headers: { origin: "https://evil.example", "content-type": "application/json" } });

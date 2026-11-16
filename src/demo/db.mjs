@@ -253,6 +253,16 @@ CREATE TABLE escalations (
 );
 `,
   },
+  {
+    id: "0004_caiae_event_sync",
+    sql: `
+CREATE TABLE caiae_sync (
+  id integer PRIMARY KEY CHECK (id = 1), resource_id text, delivered_seq bigint NOT NULL DEFAULT 0, in_flight_seq bigint,
+  attempts integer NOT NULL DEFAULT 0, next_attempt_at timestamptz, last_error text, last_delivered_at timestamptz, last_evidence_id text
+);
+INSERT INTO caiae_sync (id) VALUES (1);
+`,
+  },
 ];
 
 const MIGRATION_LOCK = 724_001_004;
