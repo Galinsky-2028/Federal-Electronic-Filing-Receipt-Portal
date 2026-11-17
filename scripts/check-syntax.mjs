@@ -7,7 +7,7 @@ const root = new URL("../src/", import.meta.url).pathname;
 const files = [];
 (function walk(dir) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
-    if (e.isDirectory()) walk(join(dir, e.name)); else if (e.name.endsWith(".mjs")) files.push(join(dir, e.name));
+    if (e.isDirectory()) walk(join(dir, e.name)); else if (/\.m?js$/.test(e.name)) files.push(join(dir, e.name));
   }
 })(root);
 for (const f of files) execFileSync(process.execPath, ["--check", f], { stdio: "inherit" });

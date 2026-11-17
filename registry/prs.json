@@ -4,7 +4,7 @@
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 60,
-  "observedAt": "2026-11-16T20:39:24Z",
+  "observedAt": "2026-11-17T01:57:44Z",
   "sourceFiles": [
     "docs/DEVELOPMENT_PLAN.md",
     "docs/ARCHITECTURE.md",
@@ -628,7 +628,9 @@
       "id": "UFR-025",
       "title": "Optional claimant accounts and recovery",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        15
+      ],
       "priority": "P1",
       "phase": "F4",
       "dependsOn": [
@@ -645,7 +647,8 @@
       "verification": [
         "Automated tests and reproducible evidence",
         "Review non-happy-path behavior and upstream reuse boundary"
-      ]
+      ],
+      "deliveryNote": "Implemented portal-locally (passkey accounts, recovery codes, provider-free recovery seam) under owner directives; email/SMS recovery needs a provider adapter; demonstration only."
     },
     {
       "id": "UFR-026",
@@ -1278,7 +1281,8 @@
         "Review non-happy-path behavior and upstream reuse boundary"
       ],
       "contributingPrs": [
-        13
+        13,
+        15
       ],
       "deliveryNote": "Partial: Implemented portal-locally as a demonstration (fictional agencies, synthetic data, demonstration rules) under the 2026-11-16 owner directives; Secure Intake integration pending; not production or government-authorized. See docs/DEMO_SYSTEM.md."
     },
@@ -1790,13 +1794,28 @@
       "number": 14,
       "title": "UFR-048 CAIAE event delivery and UFR-030 Spanish claimant flows",
       "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/14",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-16T20:39:11Z",
-      "updatedAt": "2026-11-16T20:39:11Z",
+      "updatedAt": "2026-11-16T20:40:20Z",
+      "closedAt": "2026-11-16T20:40:20Z",
+      "mergedAt": "2026-11-16T20:40:20Z",
+      "headSha": "770f9db87322b5fbe71e1b7bd6ad32f10f261096",
+      "baseRef": "main",
+      "mergeCommitSha": "fa5763c37e751bd48f47355b6f2e206001c003bc"
+    },
+    {
+      "id": 5348945050,
+      "number": 15,
+      "title": "UFR-025: passkey claimant accounts with recovery codes; scheduled witness",
+      "url": "https://github.com/neophilism/Federal-Electronic-Filing-Receipt-Portal/pull/15",
+      "state": "open",
+      "draft": false,
+      "createdAt": "2026-11-17T01:57:31Z",
+      "updatedAt": "2026-11-17T01:57:31Z",
       "closedAt": null,
       "mergedAt": null,
-      "headSha": "50547927c07da8294d2dd4f85d7173d4e39c5eea",
+      "headSha": "41c88a12880e40ff95395dc62a6fff4b0d978722",
       "baseRef": "main",
       "mergeCommitSha": null
     }

@@ -263,6 +263,42 @@ CREATE TABLE caiae_sync (
 INSERT INTO caiae_sync (id) VALUES (1);
 `,
   },
+  {
+    id: "0005_claimant_accounts",
+    sql: `
+CREATE TABLE claimant_accounts (
+  id uuid PRIMARY KEY, label text NOT NULL, created_at timestamptz NOT NULL DEFAULT clock_timestamp(), disabled_at timestamptz
+);
+CREATE TABLE passkeys (
+  id text PRIMARY KEY CHECK (id ~ '^[A-Za-z0-9_-]+$' AND length(id) BETWEEN 16 AND 1366), account_id uuid NOT NULL REFERENCES claimant_accounts(id),
+  public_key bytea NOT NULL, counter bigint NOT NULL DEFAULT 0, transports text[] NOT NULL DEFAULT '{}', label text NOT NULL,
+  backed_up boolean NOT NULL DEFAULT false, created_at timestamptz NOT NULL DEFAULT clock_timestamp(), last_used_at timestamptz, removed_at timestamptz
+);
+CREATE INDEX passkeys_account ON passkeys (account_id);
+CREATE TABLE recovery_codes (
+  account_id uuid NOT NULL REFERENCES claimant_accounts(id), code_hash text NOT NULL, generation integer NOT NULL,
+  used_at timestamptz, PRIMARY KEY (account_id, code_hash)
+);
+CREATE TABLE account_sessions (
+  id uuid PRIMARY KEY, account_id uuid NOT NULL REFERENCES claimant_accounts(id), method text NOT NULL CHECK (method IN ('passkey', 'recovery_code', 'registration')),
+  created_at timestamptz NOT NULL DEFAULT clock_timestamp(), last_seen_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+  expires_at timestamptz NOT NULL, revoked_at timestamptz, client_hint text NOT NULL DEFAULT ''
+);
+CREATE INDEX account_sessions_account ON account_sessions (account_id);
+CREATE TABLE account_filings (
+  account_id uuid NOT NULL REFERENCES claimant_accounts(id), root_id uuid NOT NULL REFERENCES submissions(id),
+  linked_at timestamptz NOT NULL DEFAULT clock_timestamp(), PRIMARY KEY (account_id, root_id)
+);
+CREATE TABLE webauthn_challenges (
+  id uuid PRIMARY KEY, purpose text NOT NULL CHECK (purpose IN ('register', 'login', 'add_passkey')), challenge text NOT NULL,
+  account_id uuid REFERENCES claimant_accounts(id), user_handle text, created_at timestamptz NOT NULL DEFAULT clock_timestamp(), expires_at timestamptz NOT NULL
+);
+CREATE TABLE account_recovery_requests (
+  id uuid PRIMARY KEY, channel text NOT NULL, contact_sha256 text NOT NULL, state text NOT NULL CHECK (state IN ('undeliverable', 'queued')),
+  created_at timestamptz NOT NULL DEFAULT clock_timestamp()
+);
+`,
+  },
 ];
 
 const MIGRATION_LOCK = 724_001_004;

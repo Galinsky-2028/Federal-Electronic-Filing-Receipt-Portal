@@ -10,6 +10,8 @@ import { GUIDE, structuredForms } from "./guided.mjs";
 import { hasRole } from "./services.mjs";
 import { WorkflowServices } from "./workflows.mjs";
 import { CaiaeClient, CaiaeEventSync, caiaeConfig } from "./caiae-sync.mjs";
+import { AccountServices } from "./accounts.mjs";
+import { createAccountExtension } from "./account-routes.mjs";
 import { filePage2 } from "../demo/views2.mjs";
 
 const UUID = "[0-9a-f-]{36}";
@@ -108,6 +110,8 @@ export async function loadFeatureModules({ backend, platform, env = {}, logger =
   backend.onFiled.push((result) => workflows.onFiled(result));
   platform.uploads = uploads;
   platform.workflows = workflows;
+  const accounts = new AccountServices({ backend, logger });
+  platform.accounts = accounts;
   const caiae = caiaeConfig(env);
   const caiaeSync = caiae ? new CaiaeEventSync({ pool: backend.pool, client: new CaiaeClient({ ...caiae, fetchImpl: env.__caiaeFetch }),
     externalRef: caiae.externalRef, keyId: backend.signer.keyId, logger }) : null;
@@ -282,8 +286,8 @@ export async function loadFeatureModules({ backend, platform, env = {}, logger =
   }
 
   return {
-    names: [...(caiaeSync ? ["caiae-event-sync"] : []), "guided-forms", "workflows", "deadlines", "notices", "uploads", "oversight", "transparency", "checkpoints", "metrics", "events-feed", "i18n-es"],
-    extensions: [extension], structuredForms, workflows, uploads,
+    names: [...(caiaeSync ? ["caiae-event-sync"] : []), "passkey-accounts", "guided-forms", "workflows", "deadlines", "notices", "uploads", "oversight", "transparency", "checkpoints", "metrics", "events-feed", "i18n-es"],
+    extensions: [createAccountExtension({ accounts, env }), extension], structuredForms, workflows, uploads, accounts,
     jobs: [() => workflows.runJobs(), ...(caiaeSync ? [() => caiaeSync.run()] : [])], caiaeSync,
   };
 }

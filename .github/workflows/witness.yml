@@ -1,0 +1,45 @@
+name: Ledger checkpoint witness
+
+# UFR-049: verifies the portal's signed ledger checkpoints from GitHub-hosted
+# infrastructure (separate from the portal host) and keeps witness state
+# between runs, so a changed checkpoint, rotated key or rewound head fails
+# loudly. Still operated by the same owner: an independent third-party
+# witness remains a governance step. Twice daily, to limit free-instance wakeups.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "37 5,17 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checkpoint-witness
+  cancel-in-progress: false
+
+jobs:
+  witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+      - name: Restore witness state
+        uses: actions/cache/restore@v4
+        with:
+          path: witness-state.json
+          key: witness-state-${{ github.run_id }}
+          restore-keys: witness-state-
+      - name: Wake the free instance
+        run: |
+          for i in 1 2 3 4 5 6; do curl --fail --silent --max-time 90 https://federal-filing-receipt-portal-prototype.onrender.com/api/health > /dev/null && exit 0; sleep 20; done; exit 1
+      - name: Witness signed checkpoints
+        run: node scripts/witness-checkpoints.mjs https://federal-filing-receipt-portal-prototype.onrender.com witness-state.json
+      - name: Save witness state
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: witness-state.json
+          key: witness-state-${{ github.run_id }}
