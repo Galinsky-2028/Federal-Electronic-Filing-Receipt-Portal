@@ -14,6 +14,7 @@ Presentation (`src/demo/routes.mjs`, `views*.mjs`) calls the `LocalIntakeBackend
 | 016, 020-022 | done | Text and attachment filing; receipt JSON, plain-text and print views; tracking with one-time access code; supplements |
 | 017, 018 | done | `/file/guide` purpose chooser; per-type guided forms with validated structured fields (for example the tort-claim sum certain) |
 | 019 | done | Server-side text drafts with a one-time draft code, 7-day expiry |
+| 025 | done | Optional claimant accounts with **passkeys (WebAuthn)**: no passwords, email or phone. Ten one-time recovery codes are shown once and stored hashed. Filings link via tracking number and the owner access code (not representative codes). Account-scoped filing list. Server-side sessions with per-session and everywhere revocation. Passkey add and remove (never the last). User verification is required, challenges are single-use, signature counters are checked, and the origin and RP ID are bound. `RecoveryDelivery` is the seam for adding email/SMS later; the default records requests as undeliverable and never claims to have sent anything. Available in Spanish. |
 | 023 | done | Identity and filing text sealed in per-record envelope-encrypted vaults; dual-control (requester plus a different privacy officer), one-time, 15-minute, ledgered reveal |
 | 024 | done | Individual staff accounts (scrypt), roles (`admin`, `intake`, `privacy_officer`, `oversight`, `records_officer`, `agency:<id>`), TOTP MFA with replay protection, lockout, agency scoping |
 | 026 | done | AES-256-GCM envelope encryption of attachments; integrity re-check on read |
@@ -32,7 +33,7 @@ Presentation (`src/demo/routes.mjs`, `views*.mjs`) calls the `LocalIntakeBackend
 | 045 | done | Notices delivered to the portal inbox with ledgered read receipts; email is simulated (provider-free outbox) |
 | 047 | done | Classification-marking detection stops collection and stores only a content-free audit event. It cannot detect unmarked classified content. |
 | 048 | done (demo tenant) | Every ledger entry is delivered in order to the deployed CAIAE engine as content-free evidence on one portal resource, through a dedicated fictional demo tenant (`federal-filing-portal-demo`). Delivery uses a durable cursor, an in-flight marker reconciled before any resend, and capped backoff. Lag and errors appear on the oversight dashboard and in metrics. The token-protected pull feed remains available. |
-| 049 | partial | Signed ledger checkpoints (`/api/ledger/checkpoints`) and `scripts/witness-checkpoints.mjs`; no independent witness operator yet |
+| 049 | partial | Signed ledger checkpoints (`/api/ledger/checkpoints`), `scripts/witness-checkpoints.mjs`, and a scheduled GitHub-hosted witness (`.github/workflows/witness.yml`) that keeps state between runs. A truly independent third-party witness operator is still needed. |
 | 050, 051 | done | Oversight dashboard (ledger validity, reveals, holds, MFA gaps, refusals, quarantine, SLAs); public transparency statistics with suppression of counts from 1 to 4 |
 | 052 | done | Receipt corrections (separately signed correction notice, never replacing the receipt), processing complaints, withdrawal |
 | 053 | done (demo schedule) | Retention schedule, legal holds, crypto-shred disposition that keeps receipts verifiable |
@@ -42,11 +43,11 @@ Presentation (`src/demo/routes.mjs`, `views*.mjs`) calls the `LocalIntakeBackend
 | 057 | partial | Degraded-mode fail-closed page; multi-instance-safe locking; load-generator script. Real HA needs paid multi-instance infrastructure. |
 | 058 | done | Metrics (`/api/metrics`, token), structured logs, backup/restore-verify scripts, runbook (docs/OPERATIONS.md) |
 | 059 | partial | Demo release-candidate evidence (docs/evidence/DEMO-PORTAL-2.md, live smoke) |
-| 025, 034-036, 046, 060 | remaining | See below |
+| 034-036, 046, 060 | remaining | See below |
 
 ## Remaining, and why
 
-- **025 Optional claimant accounts and recovery:** a recovery channel (email or SMS) needs a real provider account. Representative delegation covers shared access in the meantime.
+- **025 email/SMS recovery delivery:** accounts are done with passkeys and recovery codes. Adding email or SMS recovery only needs a provider adapter behind `RecoveryDelivery` plus provider credentials.
 - **034-036 Agency system adapters, official intake addresses, correspondence connectors:** these need real agency endpoints, addresses and mail or e-filing provider accounts.
 - **046 Federal court filing gateway:** needs a judiciary-authorized integration.
 - **060 Government deployment and operational acceptance:** needs legal authority and a receiving institution.

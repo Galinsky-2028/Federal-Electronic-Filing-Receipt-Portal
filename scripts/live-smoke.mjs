@@ -3,6 +3,7 @@
 // health, readiness, demo banner, file -> signed receipt -> public verify,
 // tamper rejection, tracking login, published keys. Usage:
 //   PORTAL_BASE_URL=https://... node scripts/live-smoke.mjs
+import { SoftAuthenticator } from "./lib/soft-authenticator.mjs";
 const base = (process.env.PORTAL_BASE_URL ?? process.argv[2] ?? "").replace(/\/$/, "");
 if (!/^https:\/\/[a-z0-9.-]+$/.test(base) && !/^http:\/\/127\.0\.0\.1:\d+$/.test(base)) { console.error("PORTAL_BASE_URL must be an https origin"); process.exit(2); }
 const results = [];
@@ -71,6 +72,26 @@ try {
   check("spanish_filing_form", esFile.headers.get("content-language") === "es" && /Enviar una presentación de demostración/.test(await esFile.text()));
   const esCase = await (await fetch(base + "/track/case", { headers: { cookie: `${pc}; ufr_lang=es` } })).text();
   check("spanish_claimant_flow", /Estado actual/.test(esCase) && /ACUSE DE DEMOSTRACIÓN · NO ES UN ACUSE DEL GOBIERNO/.test(esCase));
+  // UFR-025 accounts, headless: software WebAuthn authenticator (real ES256 ceremonies against the deployed server).
+  const authn = new SoftAuthenticator({ origin: base, rpID: new URL(base).hostname });
+  const pj = async (p, body, cookie) => { const r = await fetch(base + p, { method: "POST", body: JSON.stringify(body), redirect: "manual",
+    headers: { origin: base, "content-type": "application/json", ...(cookie ? { cookie } : {}) } }); return { r, d: await r.json().catch(() => ({})) }; };
+  const ro = await pj("/account/register/options", { label: "Smoke test account (synthetic)" });
+  const reg = await pj("/account/register/verify", { challengeId: ro.d.challengeId, response: authn.create(ro.d.options) });
+  const acct = (reg.r.headers.get("set-cookie") ?? "").split(";")[0];
+  check("account_passkey_registration", reg.r.status === 201 && reg.d.recoveryCodes?.length === 10 && /^ufr_account=/.test(acct));
+  const dash = await (await fetch(base + "/account", { headers: { cookie: acct } })).text();
+  const acsrf = dash.match(/name="csrf" value="([^"]+)"/)[1];
+  const link = await fetch(base + "/account/link", { method: "POST", redirect: "manual", body: new URLSearchParams({ csrf: acsrf, trackingNumber: tracking, accessCode: access }),
+    headers: { origin: base, cookie: acct, "content-type": "application/x-www-form-urlencoded" } });
+  const linked = await (await fetch(base + "/account", { headers: { cookie: acct } })).text();
+  check("account_links_filing", link.status === 303 && linked.includes(tracking));
+  const lo = await pj("/account/login/options", {});
+  const signin = await pj("/account/login/verify", { challengeId: lo.d.challengeId, response: authn.get(lo.d.options) });
+  const replay = await pj("/account/login/verify", { challengeId: lo.d.challengeId, response: authn.get(lo.d.options) });
+  check("account_passkey_signin_and_replay_refused", signin.r.status === 200 && replay.r.status >= 400);
+  const rec = (code) => fetch(base + "/account/recover", { method: "POST", redirect: "manual", body: new URLSearchParams({ code }), headers: { origin: base, "content-type": "application/x-www-form-urlencoded" } });
+  check("account_recovery_code_one_time", (await rec(reg.d.recoveryCodes[0])).status === 303 && (await rec(reg.d.recoveryCodes[0])).status === 401);
   const keys = await (await fetch(base + "/api/receipts/keys")).json();
   check("published_key_matches", keys.keys.some((k) => k.kid === doc.signature.keyId && k.d === undefined));
   const cross = await fetch(base + "/api/verify", { method: "POST", body: "{}", headers: { origin: "https://evil.example", "content-type": "application/json" } });

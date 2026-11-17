@@ -8,6 +8,8 @@ import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypt
  */
 export const PARTICIPANT_COOKIE = "ufr_participant";
 export const STAFF_COOKIE = "ufr_staff";
+export const ACCOUNT_COOKIE = "ufr_account";
+export const ACCOUNT_TTL_MS = 12 * 60 * 60 * 1000;
 export const PARTICIPANT_TTL_MS = 30 * 60 * 1000;
 export const STAFF_TTL_MS = 8 * 60 * 60 * 1000;
 
@@ -51,6 +53,8 @@ export function createAuth({ secret, staffUsername, staffPassword, secureCookies
     },
     issueParticipant: (rootId) => issue(PARTICIPANT_COOKIE, "p", rootId, PARTICIPANT_TTL_MS),
     issueStaff: (username) => issue(STAFF_COOKIE, "s", username, STAFF_TTL_MS),
+    issueAccount: (sessionId) => issue(ACCOUNT_COOKIE, "a", sessionId, ACCOUNT_TTL_MS),
+    account: (cookies) => read(cookies, ACCOUNT_COOKIE, "a"), // the session row is checked (and revocable) per request
     participant: (cookies) => read(cookies, PARTICIPANT_COOKIE, "p"),
     staff: (cookies) => read(cookies, STAFF_COOKIE, "s"), // account existence and roles are checked against staff_users per request
     clear: (name) => `${name}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureCookies ? "; Secure" : ""}`,

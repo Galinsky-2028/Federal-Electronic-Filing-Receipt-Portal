@@ -4,6 +4,7 @@ import { dbTestOptions } from "./helpers/db.mjs";
 import { buildApp, cookieOf, field, filingForm, FORM, form, post, staffCsrf, staffLogin } from "./helpers/app.mjs";
 import { GUIDE } from "../src/platform/guided.mjs";
 import { translateHtml } from "../src/platform/i18n.mjs";
+import { SoftAuthenticator } from "../scripts/lib/soft-authenticator.mjs";
 
 const opts = dbTestOptions();
 const USER_TEXT = ["Synthetic claim &lt;script&gt;", "Synthetic claim text.", "Pat Example", "pat@example.test", "x", "t", "b", "n"];
@@ -45,6 +46,19 @@ async function crawl(app, lang) {
   pages.guidedMissing = await (await postL("/file", filingForm("k".repeat(22), { agencyId: "demo-tort-claims-desk", filingType: "tort-claim-notice", guided: "yes" }))).text();
   pages.trackBad = await (await postL("/track", form({ trackingNumber: "x", accessCode: "y" }), { type: FORM })).text();
   pages.resumeBad = await (await postL("/file/resume", form({ draftCode: "x" }), { type: FORM })).text();
+  // Accounts: signed out, registration, dashboard with a linked filing, codes, contact recovery, errors.
+  pages.accountSignedOut = await (await get("/account")).text();
+  const authn = new SoftAuthenticator({ origin: base, rpID: new URL(base).hostname });
+  const j = async (p, body) => (await post(base, p, JSON.stringify(body), { type: "application/json" })).json();
+  const ro = await j("/account/register/options", { label: "x" });
+  const acct = cookieOf(await post(base, "/account/register/verify", JSON.stringify({ challengeId: ro.challengeId, response: authn.create(ro.options) }), { type: "application/json" }));
+  const acsrf = field(await (await get("/account", acct)).text(), "csrf");
+  pages.accountLinkBad = await (await postL("/account/link", form({ csrf: acsrf, trackingNumber: tracking, accessCode: "x" }), { cookie: acct, type: FORM })).text();
+  await post(base, "/account/link", form({ csrf: acsrf, trackingNumber: tracking, accessCode: access }), { cookie: acct, type: FORM });
+  pages.accountDashboard = await (await get("/account", acct)).text();
+  pages.accountCodes = await (await postL("/account/recovery-codes", form({ csrf: acsrf }), { cookie: acct, type: FORM })).text();
+  pages.accountContact = await (await postL("/account/recovery/contact", form({ channel: "sms", contact: "555" }), { type: FORM })).text();
+  pages.accountRecoverBad = await (await postL("/account/recover", form({ code: "x" }), { type: FORM })).text();
   return pages;
 }
 function segments(html) {

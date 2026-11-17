@@ -5,7 +5,7 @@ export const DEMO_BANNER = "Not an official U.S. Government filing service. Demo
   "Receipts from this site are not government receipts and preserve no legal deadline.";
 
 export const demoNavigation = Object.freeze([
-  ["/", "Overview"], ["/file", "File (demo)"], ["/track", "Track"], ["/verify", "Verify a receipt"],
+  ["/", "Overview"], ["/file", "File (demo)"], ["/track", "Track"], ["/account", "Account"], ["/verify", "Verify a receipt"],
   ["/agencies", "Agency directory"], ["/transparency", "Transparency"], ["/help/assistance", "Assistance"], ["/idioma/es", "Español"],
 ]);
 

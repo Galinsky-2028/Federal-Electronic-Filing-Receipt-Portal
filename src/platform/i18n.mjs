@@ -164,6 +164,48 @@ const ES = {
   "Filing guide": "Guía de presentación", "Español": "Español", "Información en español": "Información en español",
 };
 
+const ACCOUNT_ES = {
+  "Account": "Cuenta", "Your account": "Su cuenta", "Recovery codes": "Códigos de recuperación", "Recovery": "Recuperación",
+  "Optional account": "Cuenta opcional", "Sign in with a passkey": "Iniciar sesión con una llave de acceso",
+  "An account is optional. It keeps your demonstration filings in one list. It uses a": "La cuenta es opcional. Reúne sus presentaciones de demostración en una lista. Usa una",
+  "passkey": "llave de acceso",
+  "(your device's screen lock or a security key). There is no password, and no email or phone number is required.":
+    "(el bloqueo de pantalla de su dispositivo o una llave de seguridad). No hay contraseña y no se requiere correo electrónico ni teléfono.",
+  "(your device&#39;s screen lock or a security key). There is no password, and no email or phone number is required.":
+    "(el bloqueo de pantalla de su dispositivo o una llave de seguridad). No hay contraseña y no se requiere correo electrónico ni teléfono.",
+  "Create an account": "Crear una cuenta", "Account nickname (synthetic, optional)": "Apodo de la cuenta (ficticio, opcional)",
+  "Create account with a passkey": "Crear cuenta con una llave de acceso", "Save your recovery codes now": "Guarde ahora sus códigos de recuperación",
+  "Each code works once if you lose your passkey. They are shown only once and stored only as hashes.":
+    "Cada código sirve una vez si pierde su llave de acceso. Se muestran una sola vez y solo se guardan como hashes.",
+  "I saved my codes. Continue to my account": "Guardé mis códigos. Continuar a mi cuenta", "Lost your passkey?": "¿Perdió su llave de acceso?",
+  "Recovery code": "Código de recuperación", "Sign in with a recovery code": "Iniciar sesión con un código de recuperación",
+  "Recovery by email or text message": "Recuperación por correo electrónico o mensaje de texto",
+  "This demonstration has no email or SMS provider. Requests are recorded but nothing is sent. Use a recovery code.":
+    "Esta demostración no tiene proveedor de correo electrónico ni de SMS. Las solicitudes se registran pero no se envía nada. Use un código de recuperación.",
+  "Channel": "Canal", "Email": "Correo electrónico", "Text message": "Mensaje de texto", "Email or phone (synthetic)": "Correo electrónico o teléfono (ficticio)",
+  "Request recovery message": "Solicitar mensaje de recuperación",
+  "Passkeys need JavaScript. You can still track filings with a tracking number and access code, and sign in with a recovery code.":
+    "Las llaves de acceso necesitan JavaScript. Puede seguir consultando presentaciones con el número de seguimiento y el código de acceso, e iniciar sesión con un código de recuperación.",
+  "Your account (demonstration)": "Su cuenta (demostración)", "Your filings": "Sus presentaciones", "Linked filings": "Presentaciones vinculadas",
+  "Open": "Abrir", "Unlink": "Desvincular", "No filings linked yet.": "Todavía no hay presentaciones vinculadas.", "Link a filing": "Vincular una presentación",
+  "Link filing": "Vincular presentación", "Passkeys": "Llaves de acceso", "Remove": "Quitar", "Add another passkey": "Agregar otra llave de acceso",
+  "Generate new recovery codes (old codes stop working)": "Generar nuevos códigos de recuperación (los anteriores dejan de funcionar)",
+  "Signed-in sessions": "Sesiones iniciadas", "this session": "esta sesión", "Sign out this session": "Cerrar esta sesión",
+  "Sign out everywhere": "Cerrar sesión en todas partes", "Save your new recovery codes": "Guarde sus nuevos códigos de recuperación",
+  "Each code works once. They are shown only now and stored only as hashes. Your previous codes no longer work.":
+    "Cada código sirve una vez. Solo se muestran ahora y se guardan solo como hashes. Sus códigos anteriores ya no funcionan.",
+  "Back to my account →": "Volver a mi cuenta →", "Back →": "Volver →", "No message was sent": "No se envió ningún mensaje",
+  "This demonstration has no email or SMS provider configured. Your request was recorded, but nothing was sent. Use one of your recovery codes instead.":
+    "Esta demostración no tiene configurado un proveedor de correo electrónico ni de SMS. Su solicitud se registró, pero no se envió nada. Use uno de sus códigos de recuperación.",
+  "The passkey could not be verified. Try again.": "No se pudo verificar la llave de acceso. Inténtelo de nuevo.", "That request expired. Try again.": "Esa solicitud venció. Inténtelo de nuevo.",
+  "Those details did not match a filing you own. Use the tracking number and the original access code (not a representative code).":
+    "Esos datos no coinciden con una presentación suya. Use el número de seguimiento y el código de acceso original (no un código de representante).",
+  "That recovery code is not valid or was already used.": "Ese código de recuperación no es válido o ya se usó.",
+  "You cannot remove your only passkey. Add another one first.": "No puede quitar su única llave de acceso. Agregue otra primero.",
+  "That passkey is already registered.": "Esa llave de acceso ya está registrada.", "This account already has the maximum number of passkeys.": "Esta cuenta ya tiene el número máximo de llaves de acceso.",
+  "Enter an email address or phone number.": "Ingrese un correo electrónico o un número de teléfono.", "passkey": "llave de acceso", "recovery code": "código de recuperación",
+  "registration": "registro", "Tracking": "Seguimiento", "Fictional agency": "Agencia ficticia", "Status": "Estado", "Action": "Acción",
+};
 const ERRORS_ES = {
   "Choose one of the fictional demonstration agencies.": "Elija una de las agencias ficticias de demostración.",
   "That filing type is not accepted by the selected fictional agency.": "La agencia ficticia seleccionada no acepta ese tipo de presentación.",
@@ -182,7 +224,7 @@ const ERRORS_ES = {
   "Choose an access level.": "Elija un nivel de acceso.", "Choose a request type.": "Elija un tipo de solicitud.", "You do not have permission to do that.": "No tiene permiso para hacer eso.",
   "Classification markings were detected, so nothing was saved. Do not send classified information here.": "Se detectaron marcas de clasificación, por lo que no se guardó nada. No envíe información clasificada aquí.",
 };
-Object.assign(ES, ERRORS_ES);
+Object.assign(ES, ERRORS_ES, ACCOUNT_ES);
 
 const FIELD_NAMES = { sumCertain: "suma determinada", incidentDate: "fecha del incidente", incidentLocation: "lugar del incidente", injuryType: "tipo de reclamación",
   claimCategory: "categoría de la reclamación", decisionReference: "referencia de la decisión", decisionDate: "fecha de la decisión", reliefSought: "reparación solicitada",
@@ -218,6 +260,11 @@ const TEMPLATES = [
   [/^(.+) · (view|view_supplement) ·$/, (m) => `${m[1]} · ${m[2] === "view" ? "ver" : "ver y complementar"} ·`],
   [/^(.+) · (view|view_supplement) · revoked$/, (m) => `${m[1]} · ${m[2] === "view" ? "ver" : "ver y complementar"} · revocado`],
   [/^Status tracking · representative access \((\w+)\)$/, (m) => `Seguimiento del estado · acceso de representante (${m[1] === "view" ? "ver" : "ver y complementar"})`],
+  [/^Only (\d+) recovery codes left\. Generate new ones below\.$/, (m) => `Solo quedan ${m[1]} códigos de recuperación. Genere nuevos abajo.`],
+  [/^(\d+) unused recovery codes\.$/, (m) => `${m[1]} códigos de recuperación sin usar.`],
+  [/^(\d+) new$/, (m) => `${m[1]} nuevos`],
+  [/^(Passkey \d+) · added (\S+)(?: · last used (\S+))?$/, (m) => `${m[1].replace("Passkey", "Llave de acceso")} · agregada ${m[2]}${m[3] ? ` · último uso ${m[3]}` : ""}`],
+  [/^(passkey|recovery code|registration) · since (\S+)(?: ·)?$/, (m) => `${tr(m[1])} · desde ${m[2]}${m[0].endsWith(" ·") ? " ·" : ""}`],
   [/^This prototype's key$/, () => "La clave de este prototipo"],
   [/^signed these exact fields, and ledger entry #(\d+) matches\. Received$/, (m) => `firmó exactamente estos campos y la entrada del registro n.º ${m[1]} coincide. Recibido`],
   [/^; manifest$/, () => "; manifiesto"],
